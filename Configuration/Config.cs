@@ -36,7 +36,7 @@ namespace Configuration
             _parametersDictionary.TryGetValue(key, out value);
             if (value != null)
                 return value as T;
-            Console.WriteLine("[Null Value] - Parameter collection does not contain key: [{0}]", key);
+            Console.WriteLine($"[Null Value] - Question[{key}] does not Question.xml file");
             return null;
         }
 

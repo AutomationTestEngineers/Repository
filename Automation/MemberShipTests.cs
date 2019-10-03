@@ -30,6 +30,7 @@ namespace Automation
             RunStep(ReviewPage.CheckAll, "Check All Checbox and Continue");
             RunStep(FundingPage.EnterCreditCard, "Enter Credit Card Details");
             RunStep(VerificationPage.GiveAnswersForQuestions, "Answer For Question");
+            RunStep(ConfirmationPage.VeriyfConfirmation, "Verify Confirmation Message");
         }
         #endregion
     }

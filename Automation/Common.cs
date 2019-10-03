@@ -34,8 +34,11 @@ namespace Automation
         ReviewPage _reviewPage;
         FundingPage _fundingPage;
         VerificationPage _verificationPage;
+        ConfirmationPage _confirmationPage;
 
+        #endregion
 
+        #region Properties
         protected AgreementsPage AgreementsPage
         {
             get
@@ -62,7 +65,7 @@ namespace Automation
                     return _productsPage = new ProductsPage(driver);
                 return _productsPage;
             }
-        }        
+        }
         protected ApplicantsPage ApplicantsPage
         {
             get
@@ -99,12 +102,15 @@ namespace Automation
                 return _verificationPage;
             }
         }
-        
-
-        #endregion
-
-        #region Properties
-
+        protected ConfirmationPage ConfirmationPage
+        {
+            get
+            {
+                if (_confirmationPage == null)
+                    return _confirmationPage=  new ConfirmationPage(driver);
+                return _confirmationPage;
+            }
+        }
         #endregion
 
         #region Pre-Requisit

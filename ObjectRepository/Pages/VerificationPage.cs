@@ -1,4 +1,5 @@
 ﻿using Configuration;
+using NUnit.Framework;
 using OpenQA.Selenium;
 using SeleniumExtras.PageObjects;
 using System;
@@ -22,43 +23,22 @@ namespace ObjectRepository.Pages
        
         public void GiveAnswersForQuestions()
         {
-            Sleep(300);
+            ScreenBusy();
             var size = driver.FindElements(By.XPath(xpath)).Count();
             for (int i=1;i<= size; i++)
             {
-                var question = FindBy(By.XPath($"{xpath}[{i}]//h6")).Text
-                    .Split('.')[1].ToString().Replace("?", "").Trim();
-                string act_answer = Questions.Get<string>(question);
-                var answers = driver.FindElements(By.XPath($"{xpath}[{i}]/div/label/label"));
-                for (int j = 1; j < answers.Count(); j++)
-                {
-                    var answer = answers[j - 1].Text;
-                    if (answer.Contains(act_answer))
-                    {
-                        FindBy(By.XPath($"({xpath}[{i}]/div/label/input)[{j}]")).ClickCustom(driver);
-                        break;
-                    }
-                }
+                var q = FindBy(By.XPath($"{xpath}[{i}]//h6")).Text;
+                var question = q.Split('.')[1].ToString().Replace("?", "").Replace(" ", "").Trim().ToUpper();
+                string exp_answer = Questions.Get<string>(question);
+                var answers = FindElements(By.XPath($"{xpath}[{i}]/div/label/label")).Select(t => t.Text.Replace(" ", "").Trim().ToUpper()).ToList();
+
+                var index = answers.Contains(exp_answer) ? answers.FindIndex(s => s.Contains(exp_answer)) : 100;
+                if (index == 100)
+                    Assert.Fail($"Expected Answer [{exp_answer}] for Question[{q}] but Actual Answers are :{answers}");
+                FindBy(By.XPath($"({xpath}[{i}]/div/label/input)[{index+1}]"), 2, true).ClickCustom(driver);
             }
             btn_verid_answers_dispatch.ClickCustom(driver);
         }
-
-
-        private void sample()
-        {
-            //if (question.Contains(""))
-            //{
-            //    var answers = driver.FindElements(By.XPath($"//div[@class='row form-group radio-holder'][{i}]/div/label/label"));
-            //    for (int j = 1; j < answers.Count(); j++)
-            //    {
-            //        var answer = answers[j - 1].Text;
-            //        if (answer.Contains(act_answer))
-            //        {
-            //            FindBy(By.XPath($"(//div[@class='row form-group radio-holder'][{i}]/div/label/input)[{j}]")).ClickCustom(driver);
-            //            break;
-            //        }
-            //    }
-            //}
-        }
+        
     }
 }

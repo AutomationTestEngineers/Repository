@@ -16,8 +16,8 @@ namespace ObjectRepository.Pages
         private IWebElement uploadDocument_Link = null;
 
         [FindsBy]
-        private IWebElement pri_first_name = null, pri_last_name = null, pri_date_of_birth = null, pri_street_address = null, pri_street_address2 = null
-            , pri_zip = null, pri_primary_phone=null, pri_phone_type=null, pri_email_address=null, pri_contact_method=null, pri_ssn
+        private IWebElement pri_first_name = null, pri_last_name = null, pri_date_of_birth = null, pri_street_address = null //,pri_street_address2 = null
+            , pri_zip = null, pri_primary_phone=null, pri_phone_type=null, pri_email_address=null, pri_contact_method=null, pri_ssn=null
             , pri_idtype=null, pri_state_id=null, pri_identificaton_number=null, pri_idissue_date=null, pri_id_exp_date=null;        
 
         
@@ -74,7 +74,7 @@ namespace ObjectRepository.Pages
             pri_zip.SendKeysWrapper("06511", driver);
             pri_primary_phone.SendKeysWrapper("2104268147", driver);
             pri_phone_type.SelectDropDown(driver,"Mobile");
-            pri_email_address.SendKeysWrapper("amina@gmail.com", driver);
+            pri_email_address.SendKeysWrapper("asyeda@ecutechnology.com", driver);
             pri_contact_method.SelectDropDown(driver,"Email");
             pri_ssn.SendKeysWrapper("666-99-0425", driver);
             pri_idtype.SelectDropDown(driver, "Driver's License");
@@ -103,7 +103,7 @@ namespace ObjectRepository.Pages
             co_2_zip.SendKeysWrapper("89702", driver);
             co_2_primary_phone.SendKeysWrapper("9033609003", driver);
             co_2_phone_type.SelectDropDown(driver, "Mobile");
-            co_2_email_address.SendKeysWrapper("amina@gmail.com", driver);
+            co_2_email_address.SendKeysWrapper("asyeda@ecutechnology.com", driver);
             co_2_contact_method.SelectDropDown(driver, "Email");
             co_2_ssn.SendKeysWrapper("666-99-3205", driver);
             co_2_idtype.SelectDropDown(driver, "Driver's License");

@@ -6,6 +6,7 @@ using SeleniumExtras.PageObjects;
 using SeleniumExtras.WaitHelpers;
 using System.Threading;
 using Configuration;
+using System.Collections.Generic;
 
 namespace ObjectRepository.Pages
 {
@@ -52,6 +53,23 @@ namespace ObjectRepository.Pages
             catch (StaleElementReferenceException ex)
             {
                 return FindBy(by);
+            }
+            catch (NoSuchElementException e)
+            {
+                return null;
+            }
+        }
+        public IList<IWebElement> FindElements(By by, int i = 5, bool exist = false)
+        {
+            try
+            {
+                if (exist) { Sleep(i * 500); return driver.FindElements(by); }
+                Wait(ExpectedConditions.ElementExists(by), i);
+                return driver.FindElements(by);
+            }
+            catch (StaleElementReferenceException ex)
+            {
+                return FindElements(by);
             }
             catch (NoSuchElementException e)
             {
