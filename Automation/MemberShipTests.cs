@@ -16,13 +16,13 @@ namespace Automation
         public void ApplyMemberShip_For_Enrichment()
         {
             // To Verify All Hyper Links
-            RunStep(() =>
-            {
-                AgreementsPage.VerifyLinks("Terms And Conditions");
-                AgreementsPage.VerifyLinks("E-Sign Agreement");
-                AgreementsPage.VerifyLinks("Truth Insaving Certificates");
-                AgreementsPage.VerifyLinks("Truth Insaving Shares");
-            }, "Verify All HyperLinks are working", true, false);
+            //RunStep(() =>
+            //{
+            //    AgreementsPage.VerifyLinks("Terms And Conditions");
+            //    AgreementsPage.VerifyLinks("E-Sign Agreement");
+            //    AgreementsPage.VerifyLinks("Truth Insaving Certificates");
+            //    AgreementsPage.VerifyLinks("Truth Insaving Shares");
+            //}, "Verify All HyperLinks are working", true, false);
             RunStep(AgreementsPage.GetStarted, "Click GetStarted Button");
             RunStep(SelectionPage.SelectAccountType, "personal", "Select Personal Account Type");
             RunStep(ProductsPage.ChooseAccount, "savings",1, "Choose Savings Account With Option 2");

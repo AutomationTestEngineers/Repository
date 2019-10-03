@@ -23,22 +23,28 @@ namespace ObjectRepository.Pages
        
         public void GiveAnswersForQuestions()
         {
-            ScreenBusy();
-            var size = driver.FindElements(By.XPath(xpath)).Count();
-            for (int i=1;i<= size; i++)
-            {
-                var q = FindBy(By.XPath($"{xpath}[{i}]//h6")).Text;
-                var question = q.Split('.')[1].ToString().Replace("?", "").Replace(" ", "").Trim().ToUpper();
-                string exp_answer = Questions.Get<string>(question);
-                var answers = FindElements(By.XPath($"{xpath}[{i}]/div/label/label")).Select(t => t.Text.Replace(" ", "").Trim().ToUpper()).ToList();
-
-                var index = answers.Contains(exp_answer) ? answers.FindIndex(s => s.Contains(exp_answer)) : 100;
-                if (index == 100)
-                    Assert.Fail($"Expected Answer [{exp_answer}] for Question[{q}] but Actual Answers are :{answers}");
-                FindBy(By.XPath($"({xpath}[{i}]/div/label/input)[{index+1}]"), 2, true).ClickCustom(driver);
-            }
-            btn_verid_answers_dispatch.ClickCustom(driver);
-        }
-        
+            for(int j = 0; j < 5; j++)
+            {                
+                ScreenBusy();
+                try
+                {
+                    driver.FindElement(By.XPath(xpath));
+                }
+                catch { break; }
+                var size = driver.FindElements(By.XPath(xpath)).Count();
+                for (int i = 1; i <= size; i++)
+                {
+                    var q = FindBy(By.XPath($"{xpath}[{i}]//h6")).Text;
+                    var question = q.Split('.')[1].ToString().Replace("?", "").Replace(" ", "").Trim().ToUpper();
+                    string exp_answer = Questions.Get<string>(question);
+                    var answers = FindElements(By.XPath($"{xpath}[{i}]/div/label/label")).Select(t => t.Text.Replace(" ", "").Trim().ToUpper()).ToList();
+                    var index = answers.Contains(exp_answer) ? answers.FindIndex(s => s.Contains(exp_answer)) : 100;
+                    if (index == 100)
+                        throw new ArgumentNullException($"Expected Answer [{exp_answer.ToString()}] for Question[{q}] but Actual Answers are :{String.Join(",",answers)}");
+                    FindBy(By.XPath($"({xpath}[{i}]/div/label/input)[{index + 1}]"), 2, true).ClickCustom(driver);
+                }
+                btn_verid_answers_dispatch.ClickCustom(driver);
+            }            
+        }        
     }
 }
