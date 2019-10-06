@@ -255,6 +255,25 @@ namespace Automation
 
         }
 
+        public void RunStep<T, T1>(Action<T, T1,T1> action, T parmaeter1, T1 parmaeter2, T1 parmaeter3, string stepInfo, bool log = true, bool screenShot = true)
+        {
+            try
+            {
+                if (_exception == null)
+                {
+                    if (log)
+                        StepLog(stepInfo, screenShot);
+                    action(parmaeter1, parmaeter2, parmaeter3);
+                }
+            }
+            catch (Exception e)
+            {
+                _exception = e;
+                throw new Exception("Exception : " + e.Message);
+            }
+
+        }
+
         private void StepLog(string stepInfo,bool screenShot)
         {
             if(screenShot)
@@ -295,7 +314,7 @@ namespace Automation
             Console.WriteLine(" Data Read From File : " + fileName);
             for (int i = 0; i < dtContent.Rows.Count; i++)
             {
-                if ((dtContent.Rows[i])[0].ToString().Contains(testName))
+                if ((dtContent.Rows[i])[0].ToString()==testName)
                 {
                     data = dtContent.Rows[i];
                     break;

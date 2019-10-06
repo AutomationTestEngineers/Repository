@@ -17,17 +17,19 @@ namespace ObjectRepository.Pages
 
         public void SelectAccountType(string type)
         {
-            switch (type.ToLower())
+            switch (type.ToUpper())
             {
-                case "personal":
+                case "PERSONAL":
                     accountType[0].ClickCustom(driver);
                     break;
-                case "teen":
+                case "TEEN":
                     accountType[1].ClickCustom(driver);
                     break;
-                case "youth":
+                case "YOUTH":
                     accountType[2].ClickCustom(driver);
                     break;
+                default:
+                    throw new ArgumentException($"Please Provide Proper Account Type Instead [{type}]");
             }
         }
     }

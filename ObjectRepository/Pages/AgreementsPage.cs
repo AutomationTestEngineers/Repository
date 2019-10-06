@@ -7,6 +7,9 @@ namespace ObjectRepository.Pages
     {
         public AgreementsPage(IWebDriver driver) : base(driver) { }
 
+        [FindsBy]
+        private IWebElement msa = null;
+
         [FindsBy(How =How.Id,Using = "esign-agreement")]
         private IWebElement esignAgreemtLink= null;
 
@@ -22,6 +25,9 @@ namespace ObjectRepository.Pages
         [FindsBy(How = How.Id, Using = "ckbLandingAgree-0")]
         private IWebElement iAgreeChk = null;
 
+        [FindsBy(How = How.Id, Using = "ckbLandingAgree-1")]
+        private IWebElement membershipChk = null;
+
         [FindsBy(How = How.Id, Using = "continue")]
         private IWebElement getStarted = null;
 
@@ -29,6 +35,8 @@ namespace ObjectRepository.Pages
         public void GetStarted()
         {
             iAgreeChk.ClickCustom(driver);
+            if (membershipChk.Displayed)
+                membershipChk.ClickCustom(driver);
             getStarted.ClickCustom(driver);
         }
 
@@ -47,6 +55,9 @@ namespace ObjectRepository.Pages
                     break;
                 case "Truth Insaving Shares":
                     truthInSavingShares.ClickCustom(driver);
+                    break;
+                case "Membership Agreement":
+                    msa.ClickCustom(driver);
                     break;
             }
             

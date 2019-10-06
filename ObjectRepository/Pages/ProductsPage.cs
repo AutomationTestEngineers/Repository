@@ -2,6 +2,7 @@
 using SeleniumExtras.PageObjects;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -29,17 +30,26 @@ namespace ObjectRepository.Pages
         private IWebElement next = null;
         
 
+        [FindsBy(How = How.CssSelector, Using = "button[title = 'Add Money Market']")]
+        private IWebElement moneyMarket = null;
+
+        [FindsBy(How = How.CssSelector, Using = "button[title = 'Add Share Certificate']")]
+        private IWebElement shareCertificate = null;
+
+        [FindsBy(How = How.CssSelector, Using = "button[title = 'Add Credit Card']")]
+        private IWebElement creaditCard = null;
+
         public void ChooseAccount(string type,int index)
         {
-            switch (type.ToLower())
+            switch (type.ToUpper())
             {
-                case "savings":
+                case "SAVINGS":
                     saving.ClickCustom(driver);
                     break;
-                case "checking":
+                case "CHECKING":
                     checking.ClickCustom(driver);
                     break;
-                case "certificate":
+                case "CERTIFICATE":
                     certificate.ClickCustom(driver);
                     break;
                 default:
@@ -47,6 +57,30 @@ namespace ObjectRepository.Pages
             }
             dropDowns[index].ClickCustom(driver);
             next.ClickCustom(driver);
-        }        
+        } 
+        
+        public void ChooseAccountForDiscovery(string type,string subselection=null)
+        {
+            switch (type.ToUpper())
+            {                
+                case "CHECKING":
+                    checking.ClickCustom(driver);
+                    FindBy(By.XPath($"//div/h4[contains(text(),'{(new CultureInfo("en-US", false).TextInfo).ToTitleCase(subselection)}')]/../button")).ClickCustom(driver);
+                    break;
+                case "MONEY MARKET":
+                    moneyMarket.ClickCustom(driver);
+                    dropDowns[0].ClickCustom(driver);
+                    break;
+                case "SHARE CERTIFICATE":
+                    shareCertificate.ClickCustom(driver);
+                    break;
+                case "CREDIT CARD":
+                    creaditCard.ClickCustom(driver);
+                    break;
+                default:
+                    throw new ArgumentException("Please Give Correct Argument While Selecting Account Type instead["+type+"]");
+            }
+            next.ClickCustom(driver);
+        }
     }
 }

@@ -102,8 +102,9 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Common.cs" />
-    <Compile Include="MemberShipTests.cs" />
+    <Compile Include="Tests\Common.cs" />
+    <Compile Include="Tests\DiscoveryTests.cs" />
+    <Compile Include="Tests\MemberShipTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

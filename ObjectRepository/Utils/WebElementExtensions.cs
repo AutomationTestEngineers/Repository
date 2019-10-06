@@ -35,6 +35,15 @@ namespace ObjectRepository
             return (By)bysFromElement[0];
         }
 
+        public static bool Displayed(this IWebElement element)
+        {
+            try
+            {
+                return element.Displayed;
+            }
+            catch { return false; }
+        }
+
         public static void SelectDropDown(this IWebElement element, IWebDriver driver, string option, bool js = false)
         {
             int count = 0;
