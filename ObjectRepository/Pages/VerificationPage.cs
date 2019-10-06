@@ -36,11 +36,13 @@ namespace ObjectRepository.Pages
                 {
                     var q = FindBy(By.XPath($"{xpath}[{i}]//h6")).Text;
                     var question = q.Split('.')[1].ToString().Replace("?", "").Replace(" ", "").Trim().ToUpper();
-                    string exp_answer = Questions.Get<string>(question);
+                    string exp_answer = Questions.Get<string>(question)==null? "NONEOFTHEABOVE" : Questions.Get<string>(question);
                     var answers = FindElements(By.XPath($"{xpath}[{i}]/div/label/label")).Select(t => t.Text.Replace(" ", "").Trim().ToUpper()).ToList();
                     var index = answers.Contains(exp_answer) ? answers.FindIndex(s => s.Contains(exp_answer)) : 100;
                     if (index == 100)
                         throw new ArgumentNullException($"Expected Answer [{exp_answer.ToString()}] for Question[{q}] but Actual Answers are :{String.Join(",",answers)}");
+                    Console.WriteLine(q);
+                    Console.WriteLine($"Answer:[{exp_answer}] && Answers From UI:[{String.Join(",", answers)}]");
                     FindBy(By.XPath($"({xpath}[{i}]/div/label/input)[{index + 1}]"), 2, true).ClickCustom(driver);
                 }
                 btn_verid_answers_dispatch.ClickCustom(driver);

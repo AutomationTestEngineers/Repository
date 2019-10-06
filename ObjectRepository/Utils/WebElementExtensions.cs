@@ -60,7 +60,6 @@ namespace ObjectRepository
                                 return;
                             }
                         }
-                        Thread.Sleep(3000);
                     }
                 }
                 else
@@ -138,10 +137,8 @@ namespace ObjectRepository
         {
             try
             {
-                Thread.Sleep(200);
                 var wait = new WebDriverWait(driver, TimeSpan.FromSeconds(Int16.Parse(Config.ScreenTimeOut)));
-                wait.Until(ExpectedConditions.InvisibilityOfElementLocated(By.XPath(Config.ScreenBusy)));
-                Thread.Sleep(50);
+                wait.Until(ExpectedConditions.InvisibilityOfElementLocated(By.XPath(Config.ScreenBusy)));                
             }
             catch { }
         }
@@ -149,8 +146,7 @@ namespace ObjectRepository
         public static void ScreenBusy(IWebDriver driver)
         {
             try
-            {
-                Thread.Sleep(300);
+            {                
                 var wait = new WebDriverWait(driver, TimeSpan.FromSeconds(Int16.Parse(Config.ScreenTimeOut)));
                 wait.Until(ExpectedConditions.InvisibilityOfElementLocated(By.XPath(Config.ScreenBusy)));
             }
@@ -163,7 +159,7 @@ namespace ObjectRepository
             {
                 for (int i = 0; i < 2; i++)
                 {
-                    Thread.Sleep(5);
+                    Thread.Sleep(3);
                     (driver as IJavaScriptExecutor).ExecuteScript("arguments[0].setAttribute('style',arguments[1]);", element, "border: 5px solid blue;");
                     (driver as IJavaScriptExecutor).ExecuteScript("arguments[0].setAttribute('style',arguments[1]);", element, "border: 0px solid blue;");
                 }

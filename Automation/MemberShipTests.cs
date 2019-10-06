@@ -14,7 +14,7 @@ namespace Automation
         #region TestCases
         [Test]
         public void ApplyMemberShip_For_Enrichment()
-        {
+        {            
             // To Verify All Hyper Links
             //RunStep(() =>
             //{
@@ -31,7 +31,8 @@ namespace Automation
             RunStep(FundingPage.EnterCreditCard, "Enter Credit Card Details");
             RunStep(VerificationPage.GiveAnswersForQuestions, "Answer For Question");
             RunStep(ConfirmationPage.VeriyfConfirmation, "Verify Confirmation Message");
-        }
+        }      
+
         #endregion
     }
 }

@@ -142,6 +142,8 @@ namespace Automation
         {
             test = extent.CreateTest(TestContext.CurrentContext.Test.Name);
             _testData = GetExcel_Data_With_TestName("TestData.xlsx", TestContext.CurrentContext.Test.Name);
+            //string directory = Path.Combine(AppDomain.CurrentDomain.BaseDirectory);
+            //var test1 = GetTestData(directory+"TestData\\TestData.xlsx", TestContext.CurrentContext.Test.Name);
             driver = (new WebDriver()).InitDriver(_testData[1].ToString());
         }
 
@@ -258,11 +260,7 @@ namespace Automation
             if(screenShot)
                 test.Log(Status.Pass, $"(Step : {stepInfo}) " + test.AddScreenCaptureFromPath(SaveScreenShot(stepInfo)));
             else
-                test.Log(Status.Pass, "Step : " + stepInfo);
-            //test.Log(Status.Info, "Step : " + stepInfo);
-            //test.Log(Status.Pass, $"(Step : {stepInfo}) " + test.AddScreenCaptureFromPath(SaveScreenShot(stepInfo)));
-            //test.Log(Status.Pass, $"(Step : {stepInfo}) " + test.AddScreenCaptureFromBase64String(driver.ScreenShotBase64()));
-                       
+                test.Log(Status.Pass, "Step : " + stepInfo);                       
         }
         #endregion
 
@@ -292,7 +290,7 @@ namespace Automation
         {
             DataRow data = null;
             string directory = Path.Combine(AppDomain.CurrentDomain.BaseDirectory);
-            var filePath = directory + fileName;
+            var filePath = directory +"TestData//"+ fileName;
             var dtContent = GetDataTableFromExcel(filePath);
             Console.WriteLine(" Data Read From File : " + fileName);
             for (int i = 0; i < dtContent.Rows.Count; i++)
@@ -332,6 +330,44 @@ namespace Automation
                     }
                 }
                 return tbl;
+            }
+        }
+
+        public Dictionary<string, object> GetTestData(string path,string testName, bool hasHeader = true)
+        {
+            Dictionary<string, object> _dict = new Dictionary<string, object>();
+            List<string> rowName = new List<string>();
+            List<string> values = new List<string>();
+            using (var pck = new OfficeOpenXml.ExcelPackage())
+            {
+                using (var stream = File.OpenRead(path))
+                {
+                    pck.Load(stream);
+                }
+                var ws = pck.Workbook.Worksheets.FirstOrDefault();
+                DataTable tbl = new DataTable();
+                foreach (var firstRowCell in ws.Cells[1, 1, 1, ws.Dimension.End.Column])
+                {                    
+                    rowName.Add(hasHeader ? firstRowCell.Text : string.Format("Column{0}", firstRowCell.Start.Column));
+                }
+                var startRow = hasHeader ? 2 : 1;
+                for (int rowNum = startRow; rowNum <= ws.Dimension.End.Row; rowNum++)
+                {
+                    bool found = false;
+                    var wsRow = ws.Cells[rowNum, 1, rowNum, ws.Dimension.End.Column];
+                    foreach (var cell in wsRow)
+                    {
+                        if (cell.Text.ToString().Contains(testName))found = true;
+                        if (!found)break;
+                        values.Add(cell.Text);
+                    }
+                    if (found) break;
+                }
+                for (int i = 0; i < values.Count(); i++)
+                {
+                    _dict.Add(rowName[i].ToString(), values[i].ToString());
+                }
+                return _dict;
             }
         }
         #endregion
