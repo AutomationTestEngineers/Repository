@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Configuration.Parameter
+namespace Configuration.SerializableParameters
 {
-    public class Applicants
+    public class ApplicantsCreator : IParameterCreator
     {
         public string PrimaryFirstName { get; set; }
         public string PrimaryLastname { get; set; }
@@ -48,5 +48,18 @@ namespace Configuration.Parameter
         public string BeneficiaryRelation { get; set; }
         public string BeneficiaryDeathRatio { get; set; }
         public string BeneficiarySSN { get; set; }
+
+        public object Create()
+        {
+            return this;
+        }
+    }
+
+    public class DrivingLicense : IParameterCreator
+    {
+        public object Create()
+        {
+            return this;
+        }
     }
 }

@@ -13,6 +13,7 @@ using ObjectRepository;
 using ObjectRepository.Pages;
 using Configuration;
 using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace Automation
 {
@@ -27,6 +28,7 @@ namespace Automation
         protected static ExtentTest test;
 
         public  DataRow _testData;
+        HomePage _homePage;
         AgreementsPage _agreementsPage;
         SelectionPage _selectionPage;
         ProductsPage _productsPage;
@@ -39,6 +41,17 @@ namespace Automation
         #endregion
 
         #region Properties
+        public XmlParameterCollector XmlParameterCollector { get  {   return new XmlParameterCollector(); }  }
+
+        public HomePage HomePage
+        {
+            get
+            {
+                if (_homePage == null)
+                    return new HomePage(driver);
+                return _homePage;
+            }
+        }
         protected AgreementsPage AgreementsPage
         {
             get
@@ -138,13 +151,13 @@ namespace Automation
         }
 
         [SetUp]
-        public void Initialize()
+        public virtual void Initialize()
         {
             test = extent.CreateTest(TestContext.CurrentContext.Test.Name);
-            _testData = GetExcel_Data_With_TestName("TestData.xlsx", TestContext.CurrentContext.Test.Name);
-            //string directory = Path.Combine(AppDomain.CurrentDomain.BaseDirectory);
-            //var test1 = GetTestData(directory+"TestData\\TestData.xlsx", TestContext.CurrentContext.Test.Name);
-            driver = (new WebDriver()).InitDriver(_testData[1].ToString());
+            //_testData = GetExcel_Data_With_TestName("TestData.xlsx", TestContext.CurrentContext.Test.Name);
+            ////string directory = Path.Combine(AppDomain.CurrentDomain.BaseDirectory);
+            ////var test1 = GetTestData(directory+"TestData\\TestData.xlsx", TestContext.CurrentContext.Test.Name);
+            //driver = (new WebDriver()).InitDriver(_testData[1].ToString());
         }
 
         [TearDown]
@@ -161,7 +174,7 @@ namespace Automation
             {
                 case TestStatus.Failed:
                     logstatus = Status.Fail;
-                    string screenShotPath = SaveScreenShot(TestContext.CurrentContext.Test.Name);
+                    string screenShotPath = SaveScreenShot(TestContext.CurrentContext.Test.Name.Replace("\"","").Replace("(", "_").Replace(")", "_"));
                     test.Log(logstatus, stacktrace + errorMessage);
                     test.Log(logstatus, "Snapshot below: " + test.AddScreenCaptureFromPath(screenShotPath));
                     break;
@@ -176,7 +189,11 @@ namespace Automation
                     break;
             }
             if (driver != null)
+            {
+                driver.Close();
                 driver.Quit();
+                driver.Dispose();
+            }                
         }
         #endregion
 
@@ -277,9 +294,18 @@ namespace Automation
         private void StepLog(string stepInfo,bool screenShot)
         {
             if(screenShot)
+            {
                 test.Log(Status.Pass, $"(Step : {stepInfo}) " + test.AddScreenCaptureFromPath(SaveScreenShot(stepInfo)));
+                //Console.WriteLine("Step : " + stepInfo);
+            }
             else
-                test.Log(Status.Pass, "Step : " + stepInfo);                       
+            {
+                test.Log(Status.Pass, "Step : " + stepInfo);  
+                //Console.WriteLine("Step : " + stepInfo);
+            }
+
+
+
         }
         #endregion
 
@@ -391,5 +417,26 @@ namespace Automation
         }
         #endregion
 
+        #region Read Parameters
+        
+        string testParameterFile = "TestCase_Specific.xml";
+        public void CollectSharedParameters()
+        {
+            string sharedFileName = "Parameter.xml";
+            Parameter.Add<string>("SharedXML", sharedFileName);
+            var collectionCriteria = new List<string>() { "/PARAMETER/SHARED" };
+            XmlParameterCollector.Collect(sharedFileName, collectionCriteria);
+
+            // Collect Environment Based
+            var environment = Parameter.Get<string>("Environment");
+            var client = Parameter.Get<string>("Client");
+            collectionCriteria = new List<string>() { $"/PARAMETER/CLIENT/{client}/{environment}" };
+            XmlParameterCollector.Collect(sharedFileName, collectionCriteria);
+        }
+        public void CollectTestParameters()
+        {
+            XmlParameterCollector.Collect(testParameterFile, new List<string>() { "" });
+        }
+        #endregion
     }
 }

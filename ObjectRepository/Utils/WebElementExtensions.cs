@@ -95,12 +95,13 @@ namespace ObjectRepository
             return options.Select(a=>a.Text).ToList();
         }
 
-        public static void ClickCustom(this IWebElement element, IWebDriver driver, bool js = false)
+        public static void ClickCustom(this IWebElement element, IWebDriver driver, bool js = false,bool clickable = true)
         {
             try
             {
                 element.ScreenBusy(driver);
-                element.ElementToBeClickable(driver);
+                if(clickable)
+                    element.ElementToBeClickable(driver);
                 element.HighlightElement(driver);
                 if (!js)
                     element.Click();
@@ -146,8 +147,8 @@ namespace ObjectRepository
         {
             try
             {
-                var wait = new WebDriverWait(driver, TimeSpan.FromSeconds(Int16.Parse(Config.ScreenTimeOut)));
-                wait.Until(ExpectedConditions.InvisibilityOfElementLocated(By.XPath(Config.ScreenBusy)));                
+                var wait = new WebDriverWait(driver, TimeSpan.FromSeconds(Int16.Parse(Parameter.Get<string>("ScreenTimeOut"))));
+                wait.Until(ExpectedConditions.InvisibilityOfElementLocated(By.XPath(Parameter.Get<string>("ScreenBusy"))));                
             }
             catch { }
         }
@@ -155,16 +156,16 @@ namespace ObjectRepository
         public static void ScreenBusy(IWebDriver driver)
         {
             try
-            {                
-                var wait = new WebDriverWait(driver, TimeSpan.FromSeconds(Int16.Parse(Config.ScreenTimeOut)));
-                wait.Until(ExpectedConditions.InvisibilityOfElementLocated(By.XPath(Config.ScreenBusy)));
+            {
+                var wait = new WebDriverWait(driver, TimeSpan.FromSeconds(Int16.Parse(Parameter.Get<string>("ScreenTimeOut"))));
+                wait.Until(ExpectedConditions.InvisibilityOfElementLocated(By.XPath(Parameter.Get<string>("ScreenBusy"))));
             }
             catch { }
         }
 
         public static void HighlightElement(this IWebElement element, IWebDriver driver)
         {
-            if (Config.Highlight)
+            if (bool.Parse(Parameter.Get<string>("Highlight").ToLower()))
             {
                 for (int i = 0; i < 2; i++)
                 {

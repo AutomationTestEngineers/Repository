@@ -64,6 +64,12 @@ namespace ObjectRepository.Pages
         [FindsBy(How = How.CssSelector, Using = "button[id='submit-alert']")]
         private IWebElement submitLicenseImage = null;
 
+        [FindsBy(How = How.Id, Using = "pri_front-dl-status")]
+        private IWebElement successMsgDLFront = null;
+
+        [FindsBy(How = How.Id, Using = "pri_back-dl-status")]
+        private IWebElement successMsgDLBack = null;
+
 
         public void PopulateData(bool employment = false,bool jointOwner = false,bool benificiary = false)
         {
@@ -157,21 +163,21 @@ namespace ObjectRepository.Pages
 
             uploadFront.ClickCustom(driver);
             var licensePath =Path.Combine(AppDomain.CurrentDomain.BaseDirectory) + "TestData\\DrivingLicence_1.jpeg";
-
-            Sleep(5000);
-            Thread thread = new Thread(() => Clipboard.SetText(licensePath));
-            thread.SetApartmentState(ApartmentState.STA);
-            thread.Start();
-            thread.Join();
-
-            Sleep(5000);
-            uploadFront.SendKeys(OpenQA.Selenium.Keys.Control + "v");
-            
-            
+            SendKeys.SendWait(licensePath);
+            SendKeys.SendWait(@"{ENTER}");            
             uploadBack.ClickCustom(driver);
             licensePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory) + "TestData\\DrivingLicence_2.jpeg";
-            Clipboard.SetDataObject("control+v", true);
+            SendKeys.SendWait(licensePath);
+            SendKeys.SendWait(@"{ENTER}");
             submitLicenseImage.ClickCustom(driver);
+            VerifyDriverLicenseUploaded();
+        }
+
+        public void VerifyDriverLicenseUploaded()
+        {
+            Sleep(2000);
+            successMsgDLFront.HighlightElement(driver);
+            successMsgDLBack.HighlightElement(driver);
         }
 
     }

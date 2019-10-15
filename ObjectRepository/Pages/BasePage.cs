@@ -79,7 +79,7 @@ namespace ObjectRepository.Pages
         public void ScreenBusy(int timeout = 120)
         {
             Sleep(200);
-            Wait(ExpectedConditions.InvisibilityOfElementLocated(By.XPath(Config.ScreenBusy)),timeout);
+            Wait(ExpectedConditions.InvisibilityOfElementLocated(By.XPath(Parameter.Get<string>("ScreenBusy"))),timeout);
         }
 
         public void Sleep(int timeout = 1000)

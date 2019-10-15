@@ -1,5 +1,6 @@
 ﻿using OpenQA.Selenium;
 using SeleniumExtras.PageObjects;
+using SeleniumExtras.WaitHelpers;
 
 namespace ObjectRepository.Pages
 {
@@ -34,8 +35,8 @@ namespace ObjectRepository.Pages
 
         public void GetStarted()
         {
-            iAgreeChk.ClickCustom(driver);
-            if (membershipChk.Displayed)
+            iAgreeChk.ClickCustom(driver,false,false);
+            if (membershipChk.Displayed())
                 membershipChk.ClickCustom(driver);
             getStarted.ClickCustom(driver);
         }

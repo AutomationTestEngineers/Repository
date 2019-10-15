@@ -11,8 +11,9 @@ namespace ObjectRepository
         public virtual IWebDriver InitDriver(string url)
         {
             IWebDriver driver;
+            var browserType = Parameter.Get<string>("Browser");
 
-            switch (Config.Browser.ToLower())
+            switch (browserType)
             {
                 case "chrome":
                     ChromeDriverService service = ChromeDriverService.CreateDefaultService();
@@ -30,15 +31,15 @@ namespace ObjectRepository
                     options.AddUserProfilePreference("credentials_enable_service", false);
                     options.AddUserProfilePreference("profile.password_manager_enabled", false);
                     options.AddExcludedArguments(new List<string>() { "enable-automation" });                    
-                    driver = new ChromeDriver(service, options, TimeSpan.FromSeconds(Int16.Parse(Config.BrowserLoad)));
+                    driver = new ChromeDriver(service, options, TimeSpan.FromSeconds(Int16.Parse(Parameter.Get<string>("BrowserLoad"))));
                     break;
                 default:
-                    throw new ArgumentException($"Browser Option {Config.Browser} Is Not Valid - Use Chrome, Edge or IE Instead");
+                    throw new ArgumentException($"Browser Option {browserType} Is Not Valid - Use Chrome, Edge or IE Instead");
             }
             driver.Manage().Window.Maximize();
             driver.Navigate().GoToUrl(url);
-            driver.Manage().Timeouts().PageLoad = TimeSpan.FromSeconds(Int16.Parse(Config.PageLoad));
-            driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromMilliseconds(Int16.Parse(Config.ImplicitWait));
+            driver.Manage().Timeouts().PageLoad = TimeSpan.FromSeconds(Int16.Parse(Parameter.Get<string>("PageLoad")));
+            driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromMilliseconds(Int16.Parse(Parameter.Get<string>("ImplicitWait")));
             return driver;
         }
     }

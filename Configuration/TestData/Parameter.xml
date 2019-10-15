@@ -1,0 +1,30 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<PARAMETER>
+  <SHARED>
+    <Environment>ALPHA</Environment>  <!--Use ALPHA/BETA -->
+    
+    <Browser>chrome</Browser>
+    <HeadLess>false</HeadLess>
+    <ImplicitWait>300</ImplicitWait>
+    <PageLoad>60</PageLoad>
+    <ScreenTimeOut>60</ScreenTimeOut>
+    <BrowserLoad>80</BrowserLoad>
+    <ScreenBusy>//div[@class='cssload-olympicloader']/i[1]</ScreenBusy>
+    <Highlight>true</Highlight>  
+  </SHARED>
+  <CLIENT>
+    <DISCOVERY>
+      <ALPHA>
+        <Url>https://discoveryfcu.originsalphasite.net</Url>
+      </ALPHA>
+      <BETA>
+        <Url>https://discoveryfcu.originsalphasite.net</Url>
+      </BETA>
+    </DISCOVERY>
+    <ENRICHMENT>
+      <ALPHA>
+        <Url>https://enrichmentfcu.originsalphasite.net</Url>
+      </ALPHA>
+    </ENRICHMENT>
+  </CLIENT>
+</PARAMETER>
