@@ -21,7 +21,7 @@ namespace ObjectRepository.Pages
 
         string xpath = "//div[@class='row form-group radio-holder']";
 
-        public void GiveAnswersForQuestions()
+        public void AnswersForTheGivenQuestions()
         {
             for (int j = 0; j < 3; j++)
             {

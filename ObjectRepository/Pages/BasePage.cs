@@ -7,6 +7,7 @@ using SeleniumExtras.WaitHelpers;
 using System.Threading;
 using Configuration;
 using System.Collections.Generic;
+using ExpectedConditions = SeleniumExtras.WaitHelpers.ExpectedConditions;
 
 namespace ObjectRepository.Pages
 {

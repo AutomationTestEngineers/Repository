@@ -28,9 +28,9 @@ namespace ObjectRepository.Pages
         private IWebElement checkBox = null;
 
 
-        public void CheckAll()
+        public void CheckAllAndContinue()
         {
-            referral_source.SelectDropDown(driver, "Dealership");
+            referral_source.SelectComboBox(null,driver);
             checkAll.ClickCustom(driver);
             continueButton.ClickCustom(driver);
 

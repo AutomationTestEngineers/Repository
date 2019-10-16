@@ -20,6 +20,12 @@ namespace ObjectRepository.Pages
         [FindsBy(How = How.CssSelector, Using = "button[title='Add Checking']")]
         private IWebElement checking = null;
 
+        [FindsBy(How = How.Id, Using = "courtesy-pay-checkbox")]
+        private IWebElement courtesy_Checkbox = null;
+
+        [FindsBy(How = How.Id, Using = "courtesy-pay-accepted-modal-i-agree-button-without-post")]
+        private IWebElement iAgree = null;
+
         [FindsBy(How = How.CssSelector, Using = "button[title='Add Certificate']")]
         private IWebElement certificate = null;
 
@@ -38,6 +44,41 @@ namespace ObjectRepository.Pages
 
         [FindsBy(How = How.CssSelector, Using = "button[title = 'Add Credit Card']")]
         private IWebElement creaditCard = null;
+
+
+        private bool Populate { get { return GenericUtils.IsValueOdd; } }
+
+
+        public void RandomSelection()
+        {
+            //SAVINGS
+            if (Populate)
+                if(saving.Displayed())
+                    saving.ClickCustom(driver);
+
+            //CHECKING
+            if (Populate)
+            {
+                checking.ClickCustom(driver);
+                if (dropDowns[1].Displayed())
+                {
+                    dropDowns[1].ClickCustom(driver);
+                    courtesy_Checkbox.ClickCustom(driver);
+                    iAgree.ClickCustom(driver);
+                }
+            }
+
+            //CERTIFICATE
+            if (Populate)
+            {
+                certificate.ClickCustom(driver);
+                int[] numbers = new int[] {3, 6, 12,24,36, 48, 60 };
+                int random = numbers[GenericUtils.GetRandomNumber(0, numbers.Length-1)];
+                dropDowns[GenericUtils.GetRandomNumber(0, numbers.Length - 1)].ClickCustom(driver);
+            }
+
+            next.ClickCustom(driver);
+        }
 
         public void ChooseAccount(string type,int index)
         {
@@ -82,5 +123,7 @@ namespace ObjectRepository.Pages
             }
             next.ClickCustom(driver);
         }
+
+
     }
 }

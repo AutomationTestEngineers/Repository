@@ -28,21 +28,20 @@ namespace Automation
         public void ApplyMemberShip_For_Enrichment_Personal()
         {
             RunStep(HomePage.GoToPage, "membership", "Goto MemeberShip Page");
-            //RunStep(() =>
-            //{
-            //    AgreementsPage.VerifyLinks("Terms And Conditions");
-            //    AgreementsPage.VerifyLinks("E-Sign Agreement");
-            //    AgreementsPage.VerifyLinks("Truth Insaving Certificates");
-            //    AgreementsPage.VerifyLinks("Truth Insaving Shares");
-            //}, "Verify All HyperLinks are working", true, false);
+            RunStep(() =>
+            {
+                AgreementsPage.VerifyLinks("Terms And Conditions");
+                AgreementsPage.VerifyLinks("E-Sign Agreement");
+                AgreementsPage.VerifyLinks("Truth Insaving Certificates");
+                AgreementsPage.VerifyLinks("Truth Insaving Shares");
+            }, "Verify All HyperLinks are working", true, false);
             RunStep(AgreementsPage.GetStarted, "Click GetStarted Button");
             RunStep(SelectionPage.SelectAccountType, "PERSONAL", "Select Personal Account Type");
-            RunStep(ProductsPage.ChooseAccount, "savings", 1, "Choose Savings Account With Option 2");
-            RunStep(ApplicantsPage.UploadDrivingLicense, "");
-            RunStep(ApplicantsPage.PopulateData, false, true, true, "Populate Fields On Applicants page");
-            RunStep(ReviewPage.CheckAll, "Check All Checbox and Continue");
+            RunStep(ProductsPage.RandomSelection, "Choose Account");
+            RunStep(ApplicantsPage.PopulateData,true, false, true, true, "Populate Fields On Applicants page");
+            RunStep(ReviewPage.CheckAllAndContinue, "Check All Checbox and Continue");
             RunStep(FundingPage.EnterCreditCard, "Enter Credit Card Details");
-            RunStep(VerificationPage.GiveAnswersForQuestions, "Answer For Question");
+            RunStep(VerificationPage.AnswersForTheGivenQuestions, "Answer For Question");
             RunStep(ConfirmationPage.VeriyfConfirmation, "Verify Confirmation Message");
         }
 
@@ -59,11 +58,11 @@ namespace Automation
              }, "Verify All HyperLinks are working", true, false);
             RunStep(AgreementsPage.GetStarted, "Click GetStarted Button");
             RunStep(SelectionPage.SelectAccountType, "TEEN", "Select Personal Account Type");
-            RunStep(ProductsPage.ChooseAccount, "savings", 1, "Choose Savings Account With Option 2");
-            RunStep(ApplicantsPage.PopulateData, false, true, true, "Populate Fields On Applicants page");
-            RunStep(ReviewPage.CheckAll, "Check All Checbox and Continue");
+            RunStep(ProductsPage.RandomSelection, "Choose Account");
+            RunStep(ApplicantsPage.PopulateData,false, false, true, true, "Populate Fields On Applicants page");
+            RunStep(ReviewPage.CheckAllAndContinue, "Check All Checbox and Continue");
             RunStep(FundingPage.EnterCreditCard, "Enter Credit Card Details");
-            RunStep(VerificationPage.GiveAnswersForQuestions, "Answer For Question");
+            RunStep(VerificationPage.AnswersForTheGivenQuestions, "Answer For Question");
             RunStep(ConfirmationPage.VeriyfConfirmation, "Verify Confirmation Message");
         }
         
@@ -81,11 +80,11 @@ namespace Automation
             }, "Verify All HyperLinks are working", true, false);
             RunStep(AgreementsPage.GetStarted, "Click GetStarted Button");
             RunStep(SelectionPage.SelectAccountType, "YOUTH", "Select Personal Account Type");
-            RunStep(ProductsPage.ChooseAccount, "savings", 1, "Choose Savings Account With Option 2");
-            RunStep(ApplicantsPage.PopulateData, false, true, true, "Populate Fields On Applicants page");
-            RunStep(ReviewPage.CheckAll, "Check All Checbox and Continue");
+            RunStep(ProductsPage.RandomSelection, "Choose Account");
+            RunStep(ApplicantsPage.PopulateData,false, false, true, true, "Populate Fields On Applicants page");
+            RunStep(ReviewPage.CheckAllAndContinue, "Check All Checbox and Continue");
             RunStep(FundingPage.EnterCreditCard, "Enter Credit Card Details");
-            RunStep(VerificationPage.GiveAnswersForQuestions, "Answer For Question");
+            RunStep(VerificationPage.AnswersForTheGivenQuestions, "Answer For Question");
             RunStep(ConfirmationPage.VeriyfConfirmation, "Verify Confirmation Message");
         }
         #endregion

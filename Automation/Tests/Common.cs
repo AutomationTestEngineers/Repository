@@ -288,6 +288,23 @@ namespace Automation
                 _exception = e;
                 throw new Exception("Exception : " + e.Message);
             }
+        }
+        public void RunStep<T, T1,T2>(Action<T, T1, T1,T2> action, T parmaeter1, T1 parmaeter2, T1 parmaeter3, T2 parmaeter4, string stepInfo, bool log = true, bool screenShot = true)
+        {
+            try
+            {
+                if (_exception == null)
+                {
+                    if (log)
+                        StepLog(stepInfo, screenShot);
+                    action(parmaeter1, parmaeter2, parmaeter3, parmaeter4);
+                }
+            }
+            catch (Exception e)
+            {
+                _exception = e;
+                throw new Exception("Exception : " + e.Message);
+            }
 
         }
 

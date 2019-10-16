@@ -1,5 +1,7 @@
-﻿using OpenQA.Selenium;
+﻿using ObjectRepository;
+using OpenQA.Selenium;
 using SeleniumExtras.PageObjects;
+using SeleniumExtras.WaitHelpers;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -71,12 +73,14 @@ namespace ObjectRepository.Pages
         private IWebElement successMsgDLBack = null;
 
 
-        public void PopulateData(bool employment = false,bool jointOwner = false,bool benificiary = false)
+        public void PopulateData(bool primaryWithDriving = false,bool employment = false,bool jointOwner = false,bool benificiary = false)
         {
-            //UploadDrivingLicense();
-            this.PrimaryDetails();
+            if(primaryWithDriving)
+                PrimaryDetailsWithdDrivingLicense();
+            else
+                this.PrimaryDetails();
 
-            if(employment)
+            if (employment)
                 this.EmploymentInfo();
 
             if (jointOwner)
@@ -86,9 +90,7 @@ namespace ObjectRepository.Pages
                 this.AddBeneficiary();
             next.ClickCustom(driver);
 
-            eligibility.SelectDropDown(driver, "I work, worship, or attend school in one of the following counties");
-            selectEligibilty[1].ClickCustom(driver);
-            continu.ClickCustom(driver);
+            this.Eligibility();
         }
 
         public void EmploymentInfo()
@@ -116,17 +118,13 @@ namespace ObjectRepository.Pages
             pri_email_address.SendKeysWrapper("asyeda@ecutechnology.com", driver);
             pri_contact_method.SelectDropDown(driver, "Email");
             pri_ssn.SendKeysWrapper("666-99-0425", driver);
-            pri_idtype.SelectDropDown(driver, "Driver's License");
-            pri_state_id.SelectDropDown(driver, "CONNECTICUT");
-            pri_identificaton_number.SendKeysWrapper("110000077", driver);
-            pri_idissue_date.SendKeysWrapper("12/12/2012", driver, true);
-            pri_id_exp_date.SendKeysWrapper("12/12/2022", driver, true);
+            this.IdentificationType("Driver's License"); 
         }
 
         public void AddJointOwner()
         {
-            addJoinOwner.ClickCustom(driver);
-
+            if(addJoinOwner.Displayed())
+                addJoinOwner.ClickCustom(driver);
             co_2_first_name.SendKeysWrapper("Aurelie", driver);
             co_2_last_name.SendKeysWrapper("Dylan", driver);
             co_2_date_of_birth.SendKeysWrapper("11/11/1968", driver,true);
@@ -151,13 +149,14 @@ namespace ObjectRepository.Pages
             bene_first_name_0.SendKeysWrapper("Cammille", driver);
             txt_bene_last_name_0.SendKeysWrapper("Alysssa", driver);
             beneficiaryDob_0.SendKeysWrapper("03/01/1978", driver,true);
-            bene_relation_0.SelectDropDown(driver, "Spouse");
+            bene_relation_0.SelectComboBox(null,driver);
             pay_on_death_ratio_0.SendKeysWrapper("100", driver);
             bene_ssn_0.SendKeysWrapper("666-99-3194", driver);
         }
 
-        public void UploadDrivingLicense()
+        public void PrimaryDetailsWithdDrivingLicense()
         {
+            // Uploading the Driver License
             uploadDocument_Link.ClickCustom(driver);
             continuePoppup.ClickCustom(driver);
 
@@ -170,7 +169,20 @@ namespace ObjectRepository.Pages
             SendKeys.SendWait(licensePath);
             SendKeys.SendWait(@"{ENTER}");
             submitLicenseImage.ClickCustom(driver);
+            Wait(ExpectedConditions.InvisibilityOfElementLocated(By.Id("pri_image-capture-modal")),20);
             VerifyDriverLicenseUploaded();
+
+            // Primary Details
+            pri_first_name.SendKeysWrapper("Dave", driver);
+            if (pri_cell_phone.Displayed())
+                pri_cell_phone.SendKeysWrapper("2104268147", driver);
+            if (pri_primary_phone.Displayed())
+                pri_primary_phone.SendKeysWrapper("2104268147", driver);
+
+            pri_phone_type.SelectDropDown(driver, "Mobile");
+            pri_email_address.SendKeysWrapper("asyeda@ecutechnology.com", driver);
+            pri_contact_method.SelectDropDown(driver, "Email");
+            pri_ssn.SendKeysWrapper("666-99-0425", driver);
         }
 
         public void VerifyDriverLicenseUploaded()
@@ -180,5 +192,35 @@ namespace ObjectRepository.Pages
             successMsgDLBack.HighlightElement(driver);
         }
 
+        private void IdentificationType(string type = null)
+        {
+            string selectedType = pri_idtype.SelectComboBox(type,driver);
+            pri_identificaton_number.SendKeysWrapper("110000077", driver);
+            switch (type)
+            {
+                case "Student Identification Card":
+                    break;
+                case "Driver's License":
+                    pri_state_id.SelectComboBox(null,driver);
+                    pri_idissue_date.SendKeysWrapper("12/12/2012", driver, true);
+                    pri_id_exp_date.SendKeysWrapper("12/12/2022", driver, true);
+                    break;
+                case "State ID Card":
+                case "US Passport":
+                case "Military Identification Card":
+                case "Resident Alien Card":
+                    pri_idissue_date.SendKeysWrapper("12/12/2012", driver, true);
+                    pri_id_exp_date.SendKeysWrapper("12/12/2022", driver, true);
+                    break;
+            }            
+        }
+
+        private void Eligibility()
+        {
+            eligibility.SelectComboBox(null,driver);            
+            if (FindElements(selectEligibilty.GetLocator())!=null)
+                selectEligibilty[GenericUtils.GetRandomNumber(0, selectEligibilty.Count-1)].ClickCustom(driver);
+            continu.ClickCustom(driver);
+        }
     }
 }

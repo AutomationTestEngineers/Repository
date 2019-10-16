@@ -33,7 +33,7 @@ namespace Automation
             }, "Verify All HyperLinks are working", true, false);
             RunStep(AgreementsPage.GetStarted, "Click GetStarted Button");
             RunStep<string>(ProductsPage.ChooseAccountForDiscovery, "CHECKING", "BAsic", "Choose Savings Account ");
-            RunStep(ApplicantsPage.PopulateData,true,true,false, "Populate Fields On Applicants page");
+            RunStep(ApplicantsPage.PopulateData,true,true,true,false, "Populate Fields On Applicants page");
             //RunStep(ReviewPage.CheckAll, "Check All Checbox and Continue");
             //RunStep(FundingPage.EnterCreditCard, "Enter Credit Card Details");
             //RunStep(VerificationPage.GiveAnswersForQuestions, "Answer For Question");

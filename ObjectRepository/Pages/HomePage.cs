@@ -36,6 +36,7 @@ namespace ObjectRepository.Pages
                     client.ClickCustom(driver);
                     break;                
             }
+            Console.Write(type+" : Page is opened");
         }
     }
 }

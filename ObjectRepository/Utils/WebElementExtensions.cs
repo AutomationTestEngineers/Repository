@@ -10,6 +10,7 @@ using OpenQA.Selenium.Support.UI;
 using System.Windows.Forms;
 using Configuration;
 using SeleniumExtras.WaitHelpers;
+using ExpectedConditions = SeleniumExtras.WaitHelpers.ExpectedConditions;
 
 namespace ObjectRepository
 {
@@ -39,6 +40,7 @@ namespace ObjectRepository
         {
             try
             {
+                Thread.Sleep(100);
                 return element.Displayed;
             }
             catch { return false; }
@@ -86,6 +88,16 @@ namespace ObjectRepository
                 Console.WriteLine($"[Root Cause] : Unable to Secting DropDown Option [{option}] On [{element.GetLocator()}]");
                 throw new Exception(e.Message);
             }
+        }
+
+        public static string SelectComboBox(this IWebElement element, string option, IWebDriver driver)
+        {
+            element.HighlightElement(driver);
+            SelectElement select = new SelectElement(element);
+            option = option ?? select.Options[GenericUtils.GetRandomNumber(1, select.Options.Count-1)].Text.ToString().Trim();
+            select.SelectByText(option);
+            element.ScreenBusy(driver);
+            return select.SelectedOption.Text.ToString().Trim();
         }
 
         public static IList<string> GetOptions(this IWebElement element, IWebDriver driver)
