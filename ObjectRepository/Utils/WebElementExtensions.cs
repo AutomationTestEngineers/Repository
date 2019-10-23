@@ -179,7 +179,8 @@ namespace ObjectRepository
         {
             if (bool.Parse(Parameter.Get<string>("Highlight").ToLower()))
             {
-                for (int i = 0; i < 2; i++)
+                int count = Int16.Parse( Parameter.Get<string>("HighlightCount"));
+                for (int i = 0; i < count; i++)
                 {
                     Thread.Sleep(3);
                     (driver as IJavaScriptExecutor).ExecuteScript("arguments[0].setAttribute('style',arguments[1]);", element, "border: 5px solid blue;");

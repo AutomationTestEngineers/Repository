@@ -8,9 +8,64 @@
     <ImplicitWait>300</ImplicitWait>
     <PageLoad>60</PageLoad>
     <ScreenTimeOut>60</ScreenTimeOut>
-    <BrowserLoad>80</BrowserLoad>
+    <BrowserLoad>120</BrowserLoad>
     <ScreenBusy>//div[@class='cssload-olympicloader']/i[1]</ScreenBusy>
-    <Highlight>true</Highlight>  
+    <Highlight>true</Highlight>
+    <HighlightCount>4</HighlightCount>
+    
+    <!--PrimaryDetails-->
+    <PrimaryFirstName>Dave</PrimaryFirstName>
+    <PrimaryLastName>Simpson</PrimaryLastName>
+    <PrimaryDOB>03/01/1980</PrimaryDOB>
+    <PrimaryStreetAddress>083 Prospect Dr</PrimaryStreetAddress>
+    <PrimaryZIP>06511</PrimaryZIP>
+    <PrimaryCell>2104268147</PrimaryCell>
+    <PrimaryPhone>2104268147</PrimaryPhone>
+    <PrimaryPhoneType>Mobile</PrimaryPhoneType>
+    <PrimaryEmail>asyeda@ecutechnology.com</PrimaryEmail>
+    <PrimaryContactMethod>Email</PrimaryContactMethod>
+    <PrimarySSN>666-99-0425</PrimarySSN>
+    <PrimaryIdentificationNumber>110000077</PrimaryIdentificationNumber>
+    <PrimaryIssuingState>CONNECTICUT</PrimaryIssuingState>
+    <PrimaryDLIssueDate>12/12/2012</PrimaryDLIssueDate>
+    <PrimaryDLExpDate>12/12/2022</PrimaryDLExpDate>
+   
+    <!--Joint Owner--> 
+    <JoinOwnertFirstName>Aurelie</JoinOwnertFirstName>
+    <JointOwnerLastName>Dylan</JointOwnerLastName>
+    <JoinDOB>11/11/1968</JoinDOB>
+    <JoinStreetAddress>14 Freemont St</JoinStreetAddress>
+    <JointOwnerZip>89702</JointOwnerZip>
+    <JointOwnerPrimaryPhone>9033609003</JointOwnerPrimaryPhone>
+    <JointOwnerPrimaryType>Mobile</JointOwnerPrimaryType>
+    <JointOwnerEmail>asyeda@ecutechnology.com</JointOwnerEmail>
+    <JointOwnerContactMethod>Email</JointOwnerContactMethod>
+    <JointOwnerSSN>666-99-3205</JointOwnerSSN>
+    <JointOwnerIdType>Driver's License</JointOwnerIdType>
+    <JointOwnerStateId>MARYLAND</JointOwnerStateId>
+    <JointOwnerIdentificationNumber>M12100000087</JointOwnerIdentificationNumber>
+    <JointOwnerIdIssueDate>12/12/2012</JointOwnerIdIssueDate>
+    <JointOwnerIdExpDate>12/12/2022</JointOwnerIdExpDate>
+
+    <!--Beniciary-->
+    <BenificiaryFirstName>Cammille</BenificiaryFirstName>
+    <BenificiaryLastName>Alysssa</BenificiaryLastName>
+    <BenificiaryDOB>03/01/1978</BenificiaryDOB>
+    <BenificiaryRelation></BenificiaryRelation>
+    <BenificiaryPayOnDeathRation>100</BenificiaryPayOnDeathRation>
+    <BenificiarySSN>666-99-3194</BenificiarySSN>
+
+    <RoutingNumber>021000021</RoutingNumber>
+    <AccountNumber>1234567890</AccountNumber>
+
+    <Primary>
+      <PrimaryDetailsCreator>
+        <!--Projected Payments-->
+        <collection firstname="Dave" lastname="Simpson" dob="03/01/1980" address="083 Prospect Dr" zip="06511" country="" ssn="666-99-0425" dlnumber="110000077" dlstate="CONNECTICUT"/>
+        <collection firstname="Aurelie" lastname="Dylan" dob="11/11/1968" address="14 Freemont St" zip="89702" country="" ssn="666-99-3205" dlnumber="M12100000087" dlstate="MARYLAND"/>
+        <collection firstname="Cammille" lastname="Alysssa" dob="01/02/1977" address="2040 E AMERICAN BLVD" zip="55425-1239" country="" ssn="666-99-3194" dlnumber="M121000000076" dlstate="MARYLAND"/>
+      </PrimaryDetailsCreator>
+    </Primary>    
   </SHARED>
   <CLIENT>
     <DISCOVERY>
@@ -27,4 +82,20 @@
       </ALPHA>
     </ENRICHMENT>
   </CLIENT>
+  <QUESTIONS>
+    <INWHICHCITYISANYSTREET>ATLANTA</INWHICHCITYISANYSTREET>
+    <WITHWHICHNAMEAREYOUASSOCIATED>NONEOFTHEABOVE</WITHWHICHNAMEAREYOUASSOCIATED>
+    <WHATTYPEOFRESIDENCEIS222333PEACHTREEPLACE>SINGLEFAMILYRESIDENCE</WHATTYPEOFRESIDENCEIS222333PEACHTREEPLACE>
+    <WHATYEARISYOURFORDEXPEDITION>2005</WHATYEARISYOURFORDEXPEDITION>
+    <WHICHOFTHEFOLLOWINGPEOPLEDOYOUKNOW>NONEOFTHEABOVE</WHICHOFTHEFOLLOWINGPEOPLEDOYOUKNOW>
+    <INWHICHCOUNTYHAVEYOULIVED>FULTON</INWHICHCOUNTYHAVEYOULIVED>
+    <WHENDIDYOUPURCHASEORLEASEYOURFORDEXPEDITION>DECEMBER2006</WHENDIDYOUPURCHASEORLEASEYOURFORDEXPEDITION>
+    <FROMWHOMDIDYOUPURCHASETHEPROPERTYAT222333PEACHTREEPLACE>JOEANDERSON</FROMWHOMDIDYOUPURCHASETHEPROPERTYAT222333PEACHTREEPLACE>
+    <ATWHICHOFTHEFOLLOWINGADDRESSESHAVEYOULIVED>NONEOFTHEABOVE</ATWHICHOFTHEFOLLOWINGADDRESSESHAVEYOULIVED>
+    <WITHWHICHNAMEAREYOUASSOCIATED>NONEOFTHEABOVE</WITHWHICHNAMEAREYOUASSOCIATED>
+    <HOWLONGHAVEYOUBEENASSOCIATEDWITHTHEPROPERTYAT222333PEACHTREEPLACE>OVER5YEARS</HOWLONGHAVEYOUBEENASSOCIATEDWITHTHEPROPERTYAT222333PEACHTREEPLACE>
+    <WHATISTHEAPPROXIMATESQUAREFOOTAGEOFTHEPROPERTYAT222333PEACHTREEPLACE>OVER2,500</WHATISTHEAPPROXIMATESQUAREFOOTAGEOFTHEPROPERTYAT222333PEACHTREEPLACE>
+    <WHENDIDYOUPURCHASETHEPROPERTYAT222333PEACHTREEPLACE>AUGUST1999</WHENDIDYOUPURCHASETHEPROPERTYAT222333PEACHTREEPLACE>
+    <WhendidyoupurchasethepropertyatPEACHTREEPLACE>AUGUST1999</WhendidyoupurchasethepropertyatPEACHTREEPLACE>
+  </QUESTIONS>
 </PARAMETER>

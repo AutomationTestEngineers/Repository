@@ -1,12 +1,17 @@
-﻿using ObjectRepository;
+﻿using Configuration;
+using Configuration.SerializableParameters;
+using ObjectRepository;
 using OpenQA.Selenium;
 using SeleniumExtras.PageObjects;
 using SeleniumExtras.WaitHelpers;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.IO;
+using System.Linq;
 using System.Threading;
 using System.Windows.Forms;
+using Keys = OpenQA.Selenium.Keys;
 
 namespace ObjectRepository.Pages
 {
@@ -75,19 +80,32 @@ namespace ObjectRepository.Pages
 
         public void PopulateData(bool primaryWithDriving = false,bool employment = false,bool jointOwner = false,bool benificiary = false)
         {
-            if(primaryWithDriving)
-                PrimaryDetailsWithdDrivingLicense();
+            var primary = Parameter.Get<List<ICollection>>("Primary");
+            int random = GenericUtils.GetRandomNumber(0, primary.Count);
+            var section = primary[random];
+
+            if (primaryWithDriving)
+                PrimaryDetailsWithdDrivingLicense(section);
             else
-                this.PrimaryDetails();
+                this.PrimaryDetails(section);
 
             if (employment)
                 this.EmploymentInfo();
 
             if (jointOwner)
-                this.AddJointOwner();
+            {
+                var uniqSSN = primary.Where(a => a.SSN != Parameter.Get<string>("JointOwnerSSN")).FirstOrDefault().SSN.ToString();
+                var ssn = section.SSN == Parameter.Get<string>("JointOwnerSSN") ? uniqSSN : Parameter.Get<string>("JointOwnerSSN");
+                this.AddJointOwner(ssn);
+            }                
 
             if (benificiary)
-                this.AddBeneficiary();
+            {
+                var uniqSSN = primary.Where(a => a.SSN != Parameter.Get<string>("BenificiarySSN")).LastOrDefault().SSN.ToString();
+                var ssn = section.SSN== Parameter.Get<string>("BenificiarySSN")? uniqSSN : Parameter.Get<string>("BenificiarySSN");               
+                this.AddBeneficiary(ssn);
+            }
+               
             next.ClickCustom(driver);
 
             this.Eligibility();
@@ -101,60 +119,97 @@ namespace ObjectRepository.Pages
             pri_employer_zip.SendKeysWrapper("Dave", driver);
         }
 
-        public void PrimaryDetails()
+        public void PrimaryDetails(ICollection details)
         {
-            pri_first_name.SendKeysWrapper("Dave", driver);
-            pri_last_name.SendKeysWrapper("Simpson", driver);
-            pri_date_of_birth.SendKeysWrapper("03/01/1980", driver, true);
-            pri_street_address.SendKeysWrapper("083 Prospect Dr", driver);
-            pri_zip.SendKeysWrapper("06511", driver);
+            if (details != null)
+            {
+                if(!string.IsNullOrEmpty(details.FirstName))
+                    pri_first_name.SendKeysWrapper(details.FirstName, driver);
+                if (!string.IsNullOrEmpty(details.LastName))
+                    pri_last_name.SendKeysWrapper(details.LastName, driver);
+                if (!string.IsNullOrEmpty(details.DOB))
+                {
+                    pri_date_of_birth.SendKeysWrapper(details.DOB, driver, true);
+                    pri_date_of_birth.SendKeys(Keys.Tab);
+                    if (FindBy(By.Id("pri_date_of_birth-error"),1,true)!=null)
+                    {
+                       var a = Int16.Parse(new String(FindBy(By.Id("pri_date_of_birth-error")).Text.Where(Char.IsDigit).ToArray()));
+                        pri_date_of_birth.SendKeysWrapper(GenericUtils.GenerateDate(0, 0, -a+-2), driver, true);
+                        pri_date_of_birth.SendKeys(Keys.Tab);
+                    }
 
-            if(pri_cell_phone.Displayed())
-                pri_cell_phone.SendKeysWrapper("2104268147", driver);
-            if (pri_primary_phone.Displayed())
-                pri_primary_phone.SendKeysWrapper("2104268147", driver);
+                }                    
+                if (!string.IsNullOrEmpty(details.Address))
+                    pri_street_address.SendKeysWrapper(details.Address, driver);
+                if (!string.IsNullOrEmpty(details.Zip))
+                    pri_zip.SendKeysWrapper(details.Zip, driver);
 
-            pri_phone_type.SelectDropDown(driver, "Mobile");
-            pri_email_address.SendKeysWrapper("asyeda@ecutechnology.com", driver);
-            pri_contact_method.SelectDropDown(driver, "Email");
-            pri_ssn.SendKeysWrapper("666-99-0425", driver);
-            this.IdentificationType("Driver's License"); 
+                if (pri_cell_phone.Displayed())
+                    pri_cell_phone.SendKeysWrapper(Parameter.Get<string>("PrimaryCell"), driver);
+                if (pri_primary_phone.Displayed())
+                    pri_primary_phone.SendKeysWrapper(Parameter.Get<string>("PrimaryPhone"), driver);
+
+                pri_phone_type.SelectDropDown(driver, Parameter.Get<string>("PrimaryPhoneType"));
+                pri_email_address.SendKeysWrapper(Parameter.Get<string>("PrimaryEmail"), driver);
+                pri_contact_method.SelectDropDown(driver, Parameter.Get<string>("PrimaryContactMethod"));
+                if (!string.IsNullOrEmpty(details.SSN))
+                    pri_ssn.SendKeysWrapper(details.SSN, driver);
+                this.IdentificationType("Driver's License", details);
+            }
+            else
+            {
+                pri_first_name.SendKeysWrapper(Parameter.Get<string>("PrimaryFirstName"), driver);
+                pri_last_name.SendKeysWrapper(Parameter.Get<string>("PrimaryLastName"), driver);
+                pri_date_of_birth.SendKeysWrapper(Parameter.Get<string>("PrimaryDOB"), driver, true);
+                pri_street_address.SendKeysWrapper(Parameter.Get<string>("PrimaryStreetAddress"), driver);
+                pri_zip.SendKeysWrapper(Parameter.Get<string>("PrimaryZIP"), driver);
+
+                if (pri_cell_phone.Displayed())
+                    pri_cell_phone.SendKeysWrapper(Parameter.Get<string>("PrimaryCell"), driver);
+                if (pri_primary_phone.Displayed())
+                    pri_primary_phone.SendKeysWrapper(Parameter.Get<string>("PrimaryPhone"), driver);
+
+                pri_phone_type.SelectDropDown(driver, Parameter.Get<string>("PrimaryPhoneType"));
+                pri_email_address.SendKeysWrapper(Parameter.Get<string>("PrimaryEmail"), driver);
+                pri_contact_method.SelectDropDown(driver, Parameter.Get<string>("PrimaryContactMethod"));
+                pri_ssn.SendKeysWrapper(Parameter.Get<string>("PrimarySSN"), driver);
+                this.IdentificationType("Driver's License");
+            }
         }
 
-        public void AddJointOwner()
+        public void AddJointOwner(string ssn)
         {
             if(addJoinOwner.Displayed())
-                addJoinOwner.ClickCustom(driver);
-            co_2_first_name.SendKeysWrapper("Aurelie", driver);
-            co_2_last_name.SendKeysWrapper("Dylan", driver);
-            co_2_date_of_birth.SendKeysWrapper("11/11/1968", driver,true);
-            co_2_street_address.SendKeysWrapper("14 Freemont St", driver);
-            co_2_zip.SendKeysWrapper("89702", driver);
-            co_2_primary_phone.SendKeysWrapper("9033609003", driver);
-            co_2_phone_type.SelectDropDown(driver, "Mobile");
-            co_2_email_address.SendKeysWrapper("asyeda@ecutechnology.com", driver);
-            co_2_contact_method.SelectDropDown(driver, "Email");
-            co_2_ssn.SendKeysWrapper("666-99-3205", driver);
-            co_2_idtype.SelectDropDown(driver, "Driver's License");
-            co_2_state_id.SelectDropDown(driver, "MARYLAND");
-            co_2_identificaton_number.SendKeysWrapper("M12100000087", driver);
-            co_2_idissue_date.SendKeysWrapper("12/12/2012", driver,true);
-            co_2_id_exp_date.SendKeysWrapper("12/12/2022", driver,true);
+                addJoinOwner.ClickCustom(driver);                
+            co_2_first_name.SendKeysWrapper(Parameter.Get<string>("JoinOwnertFirstName"), driver);
+            co_2_last_name.SendKeysWrapper(Parameter.Get<string>("JointOwnerLastName"), driver);
+            co_2_date_of_birth.SendKeysWrapper(Parameter.Get<string>("JoinDOB"), driver,true);
+            co_2_street_address.SendKeysWrapper(Parameter.Get<string>("JoinStreetAddress"), driver);
+            co_2_zip.SendKeysWrapper(Parameter.Get<string>("JointOwnerZip"), driver);
+            co_2_primary_phone.SendKeysWrapper(Parameter.Get<string>("JointOwnerPrimaryPhone"), driver);
+            co_2_phone_type.SelectDropDown(driver, Parameter.Get<string>("JointOwnerPrimaryType"));
+            co_2_email_address.SendKeysWrapper(Parameter.Get<string>("JointOwnerEmail"), driver);
+            co_2_contact_method.SelectDropDown(driver, Parameter.Get<string>("JointOwnerContactMethod"));
+            co_2_ssn.SendKeysWrapper(ssn, driver);
+            co_2_idtype.SelectDropDown(driver, Parameter.Get<string>("JointOwnerIdType"));
+            co_2_state_id.SelectDropDown(driver, Parameter.Get<string>("JointOwnerStateId"));
+            co_2_identificaton_number.SendKeysWrapper(Parameter.Get<string>("JointOwnerIdentificationNumber"), driver);
+            co_2_idissue_date.SendKeysWrapper(Parameter.Get<string>("JointOwnerIdIssueDate"), driver,true);
+            co_2_id_exp_date.SendKeysWrapper(Parameter.Get<string>("JointOwnerIdExpDate"), driver,true);
         }
 
-        public void AddBeneficiary()
+        public void AddBeneficiary(string ssn)
         {
             addBenificiary.ClickCustom(driver);
-
-            bene_first_name_0.SendKeysWrapper("Cammille", driver);
-            txt_bene_last_name_0.SendKeysWrapper("Alysssa", driver);
-            beneficiaryDob_0.SendKeysWrapper("03/01/1978", driver,true);
+            bene_first_name_0.SendKeysWrapper(Parameter.Get<string>("BenificiaryFirstName"), driver);
+            txt_bene_last_name_0.SendKeysWrapper(Parameter.Get<string>("BenificiaryLastName"), driver);
+            beneficiaryDob_0.SendKeysWrapper(Parameter.Get<string>("BenificiaryDOB"), driver,true);
             bene_relation_0.SelectComboBox(null,driver);
-            pay_on_death_ratio_0.SendKeysWrapper("100", driver);
-            bene_ssn_0.SendKeysWrapper("666-99-3194", driver);
+            pay_on_death_ratio_0.SendKeysWrapper(Parameter.Get<string>("BenificiaryPayOnDeathRation"), driver);
+            bene_ssn_0.SendKeysWrapper(ssn, driver);
         }
 
-        public void PrimaryDetailsWithdDrivingLicense()
+        public void PrimaryDetailsWithdDrivingLicense(ICollection details)
         {
             // Uploading the Driver License
             uploadDocument_Link.ClickCustom(driver);
@@ -162,10 +217,12 @@ namespace ObjectRepository.Pages
 
             uploadFront.ClickCustom(driver);
             var licensePath =Path.Combine(AppDomain.CurrentDomain.BaseDirectory) + "TestData\\DrivingLicence_1.jpeg";
+            Sleep(5000);
             SendKeys.SendWait(licensePath);
             SendKeys.SendWait(@"{ENTER}");            
             uploadBack.ClickCustom(driver);
             licensePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory) + "TestData\\DrivingLicence_2.jpeg";
+            Sleep(2000);
             SendKeys.SendWait(licensePath);
             SendKeys.SendWait(@"{ENTER}");
             submitLicenseImage.ClickCustom(driver);
@@ -173,16 +230,17 @@ namespace ObjectRepository.Pages
             VerifyDriverLicenseUploaded();
 
             // Primary Details
-            pri_first_name.SendKeysWrapper("Dave", driver);
+            if(pri_first_name.GetAttribute("value").Contains("D")) pri_first_name.SendKeysWrapper("Dave",driver);
             if (pri_cell_phone.Displayed())
-                pri_cell_phone.SendKeysWrapper("2104268147", driver);
+                pri_cell_phone.SendKeysWrapper(Parameter.Get<string>("PrimaryCell"), driver);
             if (pri_primary_phone.Displayed())
-                pri_primary_phone.SendKeysWrapper("2104268147", driver);
+                pri_primary_phone.SendKeysWrapper(Parameter.Get<string>("PrimaryPhone"), driver);
 
-            pri_phone_type.SelectDropDown(driver, "Mobile");
-            pri_email_address.SendKeysWrapper("asyeda@ecutechnology.com", driver);
-            pri_contact_method.SelectDropDown(driver, "Email");
-            pri_ssn.SendKeysWrapper("666-99-0425", driver);
+            pri_phone_type.SelectDropDown(driver, Parameter.Get<string>("PrimaryPhoneType"));
+            pri_email_address.SendKeysWrapper(Parameter.Get<string>("PrimaryEmail"), driver);
+            pri_contact_method.SelectDropDown(driver, Parameter.Get<string>("PrimaryContactMethod"));
+            if (!string.IsNullOrEmpty(details.SSN))
+                pri_ssn.SendKeysWrapper(details.SSN, driver);
         }
 
         public void VerifyDriverLicenseUploaded()
@@ -192,18 +250,18 @@ namespace ObjectRepository.Pages
             successMsgDLBack.HighlightElement(driver);
         }
 
-        private void IdentificationType(string type = null)
+        private void IdentificationType(string type,ICollection details = null)
         {
             string selectedType = pri_idtype.SelectComboBox(type,driver);
-            pri_identificaton_number.SendKeysWrapper("110000077", driver);
-            switch (type)
+            pri_identificaton_number.SendKeysWrapper(details.DLNumber, driver);
+            switch (selectedType)
             {
                 case "Student Identification Card":
                     break;
                 case "Driver's License":
-                    pri_state_id.SelectComboBox(null,driver);
-                    pri_idissue_date.SendKeysWrapper("12/12/2012", driver, true);
-                    pri_id_exp_date.SendKeysWrapper("12/12/2022", driver, true);
+                    pri_state_id.SelectComboBox(details.DLState, driver);
+                    pri_idissue_date.SendKeysWrapper(Parameter.Get<string>("PrimaryDLIssueDate"), driver, true);
+                    pri_id_exp_date.SendKeysWrapper(Parameter.Get<string>("PrimaryDLExpDate"), driver, true);
                     break;
                 case "State ID Card":
                 case "US Passport":

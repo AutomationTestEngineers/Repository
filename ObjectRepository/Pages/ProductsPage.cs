@@ -55,7 +55,7 @@ namespace ObjectRepository.Pages
             if (Populate)
                 if(saving.Displayed())
                     saving.ClickCustom(driver);
-
+            Sleep(300);
             //CHECKING
             if (Populate)
             {
@@ -67,7 +67,7 @@ namespace ObjectRepository.Pages
                     iAgree.ClickCustom(driver);
                 }
             }
-
+            Sleep(200);
             //CERTIFICATE
             if (Populate)
             {
@@ -76,7 +76,7 @@ namespace ObjectRepository.Pages
                 int random = numbers[GenericUtils.GetRandomNumber(0, numbers.Length-1)];
                 dropDowns[GenericUtils.GetRandomNumber(0, numbers.Length - 1)].ClickCustom(driver);
             }
-
+            Sleep(200);
             next.ClickCustom(driver);
         }
 

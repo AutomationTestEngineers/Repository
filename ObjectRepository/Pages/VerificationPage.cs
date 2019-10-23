@@ -1,5 +1,4 @@
 ﻿using Configuration;
-using NUnit.Framework;
 using OpenQA.Selenium;
 using SeleniumExtras.PageObjects;
 using System;
@@ -32,7 +31,7 @@ namespace ObjectRepository.Pages
                 {
                     var q = FindBy(By.XPath($"{xpath}[{i}]//h6")).Text;
                     var question = q.Split('.')[1].ToString().Replace("?", "").Replace(" ", "").Trim().ToUpper();
-                    string exp_answer = Questions.Get<string>(question) == null ? "NONEOFTHEABOVE" : Questions.Get<string>(question);
+                    string exp_answer = Parameter.Get<string>(question) == null ? "NONEOFTHEABOVE" : Parameter.Get<string>(question);
                     var answers = FindElements(By.XPath($"{xpath}[{i}]/div/label/label")).Select(t => t.Text.Replace(" ", "").Trim().ToUpper()).ToList();
                     var index = answers.FindIndex(s => s.Contains(exp_answer));
                     try

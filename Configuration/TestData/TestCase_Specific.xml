@@ -1,6 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <PARAMETER>
   <TESTSPECIFIC>
-    
+    <ApplyMemberShip_For_Enrichment_Teen>
+      <!--<JointOwnerIdentificationNumber>12345678</JointOwnerIdentificationNumber>-->
+    </ApplyMemberShip_For_Enrichment_Teen>
   </TESTSPECIFIC>
 </PARAMETER>

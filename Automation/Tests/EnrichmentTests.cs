@@ -24,7 +24,7 @@ namespace Automation
 
         #region TestCases
 
-        [Test, Category("PERSONAL"), Category("MEMBERSHIP")]
+        [Test, Order(1), Category("PERSONAL"), Category("MEMBERSHIP")]
         public void ApplyMemberShip_For_Enrichment_Personal()
         {
             RunStep(HomePage.GoToPage, "membership", "Goto MemeberShip Page");
@@ -38,17 +38,25 @@ namespace Automation
             RunStep(AgreementsPage.GetStarted, "Click GetStarted Button");
             RunStep(SelectionPage.SelectAccountType, "PERSONAL", "Select Personal Account Type");
             RunStep(ProductsPage.RandomSelection, "Choose Account");
-            RunStep(ApplicantsPage.PopulateData,true, false, true, true, "Populate Fields On Applicants page");
+            RunStep(ApplicantsPage.PopulateData, false, false, true, true, "Populate Fields On Applicants page");
             RunStep(ReviewPage.CheckAllAndContinue, "Check All Checbox and Continue");
-            RunStep(FundingPage.EnterCreditCard, "Enter Credit Card Details");
+            RunStep<string>(FundingPage.Payment,null, "Enter Credit Card Details");
             RunStep(VerificationPage.AnswersForTheGivenQuestions, "Answer For Question");
             RunStep(ConfirmationPage.VeriyfConfirmation, "Verify Confirmation Message");
         }
 
-        [Test,Category("TEEN") ,Category("MEMBERSHIP")]
+        [Test, Order(2), Category("PERSONAL"), Category("MEMBERSHIP")]
+        public void TobeFailed()
+        {
+            // To Avoid the socket exception
+            RunStep(HomePage.GoToPage, "membership", "Goto MemeberShip Page", true, false);
+            RunStep(AgreementsPage.GetStarted, "Click GetStarted Button");
+        }
+
+        [Test, Category("TEEN"), Category("MEMBERSHIP")]
         public void ApplyMemberShip_For_Enrichment_Teen()
         {
-           RunStep(HomePage.GoToPage, "membership", "Goto MemeberShip Page");
+            RunStep(HomePage.GoToPage, "membership", "Goto MemeberShip Page", true, false);
             RunStep(() =>
              {
                  AgreementsPage.VerifyLinks("Terms And Conditions");
@@ -59,13 +67,13 @@ namespace Automation
             RunStep(AgreementsPage.GetStarted, "Click GetStarted Button");
             RunStep(SelectionPage.SelectAccountType, "TEEN", "Select Personal Account Type");
             RunStep(ProductsPage.RandomSelection, "Choose Account");
-            RunStep(ApplicantsPage.PopulateData,false, false, true, true, "Populate Fields On Applicants page");
+            Parameter.Add<string>("PrimaryDOB", GenericUtils.GenerateDate(0, 0, -18));
+            RunStep(ApplicantsPage.PopulateData, false, false, true, true, "Populate Fields On Applicants page");
             RunStep(ReviewPage.CheckAllAndContinue, "Check All Checbox and Continue");
-            RunStep(FundingPage.EnterCreditCard, "Enter Credit Card Details");
+            RunStep<string>(FundingPage.Payment, null, "Enter Credit Card Details");
             RunStep(VerificationPage.AnswersForTheGivenQuestions, "Answer For Question");
             RunStep(ConfirmationPage.VeriyfConfirmation, "Verify Confirmation Message");
         }
-        
 
         [Test, Category("YOUTH"), Category("MEMBERSHIP")]
         public void ApplyMemberShip_For_Enrichment_Youth()
@@ -81,12 +89,14 @@ namespace Automation
             RunStep(AgreementsPage.GetStarted, "Click GetStarted Button");
             RunStep(SelectionPage.SelectAccountType, "YOUTH", "Select Personal Account Type");
             RunStep(ProductsPage.RandomSelection, "Choose Account");
-            RunStep(ApplicantsPage.PopulateData,false, false, true, true, "Populate Fields On Applicants page");
+            Parameter.Add<string>("PrimaryDOB", GenericUtils.GenerateDate(0, 0, -11));
+            RunStep(ApplicantsPage.PopulateData, false, false, true, true, "Populate Fields On Applicants page");
             RunStep(ReviewPage.CheckAllAndContinue, "Check All Checbox and Continue");
-            RunStep(FundingPage.EnterCreditCard, "Enter Credit Card Details");
+            RunStep<string>(FundingPage.Payment, null, "Enter Credit Card Details");
             RunStep(VerificationPage.AnswersForTheGivenQuestions, "Answer For Question");
             RunStep(ConfirmationPage.VeriyfConfirmation, "Verify Confirmation Message");
         }
+
         #endregion
     }
 }

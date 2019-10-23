@@ -27,7 +27,7 @@ namespace Automation
         protected static ExtentHtmlReporter htmlReporter;
         protected static ExtentTest test;
 
-        public  DataRow _testData;
+        public DataRow _testData;
         HomePage _homePage;
         AgreementsPage _agreementsPage;
         SelectionPage _selectionPage;
@@ -41,14 +41,21 @@ namespace Automation
         #endregion
 
         #region Properties
-        public XmlParameterCollector XmlParameterCollector { get  {   return new XmlParameterCollector(); }  }
+        public string TestName
+        {
+            get
+            {
+                return TestContext.CurrentContext.Test.Name;
+            }
+        }
+        public XmlParameterCollector XmlParameterCollector { get { return new XmlParameterCollector(); } }
 
         public HomePage HomePage
         {
             get
             {
                 if (_homePage == null)
-                    return new HomePage(driver);
+                    return _homePage=new HomePage(driver);
                 return _homePage;
             }
         }
@@ -120,7 +127,7 @@ namespace Automation
             get
             {
                 if (_confirmationPage == null)
-                    return _confirmationPage=  new ConfirmationPage(driver);
+                    return _confirmationPage = new ConfirmationPage(driver);
                 return _confirmationPage;
             }
         }
@@ -140,8 +147,9 @@ namespace Automation
             /*htmlReporter.Configuration().JS = "$('.brand-logo').text('test image').prepend('<img src=@"file:///D:\Users\jloyzaga\Documents\FrameworkForJoe\FrameworkForJoe\Capgemini_logo_high_res-smaller-2.jpg"> ')";*/
             htmlReporter.Config.JS = "$('.brand-logo').text('').append('<img src=D:\\Users\\jloyzaga\\Documents\\FrameworkForJoe\\FrameworkForJoe\\Capgemini_logo_high_res-smaller-2.jpg>')";
             extent = new ExtentReports();
-            extent.AttachReporter(htmlReporter);            
-            Questions.Collect("TestData\\Questions.xml", new List<string>() { "QUESTIONS" });
+            extent.AttachReporter(htmlReporter);
+            //Questions.Collect("TestData\\Questions.xml", new List<string>() { "QUESTIONS" });
+
         }
 
         [OneTimeTearDown]
@@ -153,11 +161,12 @@ namespace Automation
         [SetUp]
         public virtual void Initialize()
         {
-            test = extent.CreateTest(TestContext.CurrentContext.Test.Name);
+            test = extent.CreateTest(this.TestName);
             //_testData = GetExcel_Data_With_TestName("TestData.xlsx", TestContext.CurrentContext.Test.Name);
             ////string directory = Path.Combine(AppDomain.CurrentDomain.BaseDirectory);
             ////var test1 = GetTestData(directory+"TestData\\TestData.xlsx", TestContext.CurrentContext.Test.Name);
             //driver = (new WebDriver()).InitDriver(_testData[1].ToString());
+            Parameter.Clear();
         }
 
         [TearDown]
@@ -174,7 +183,7 @@ namespace Automation
             {
                 case TestStatus.Failed:
                     logstatus = Status.Fail;
-                    string screenShotPath = SaveScreenShot(TestContext.CurrentContext.Test.Name.Replace("\"","").Replace("(", "_").Replace(")", "_"));
+                    string screenShotPath = SaveScreenShot(TestContext.CurrentContext.Test.Name.Replace("\"", "").Replace("(", "_").Replace(")", "_"));
                     test.Log(logstatus, stacktrace + errorMessage);
                     test.Log(logstatus, "Snapshot below: " + test.AddScreenCaptureFromPath(screenShotPath));
                     break;
@@ -192,13 +201,14 @@ namespace Automation
             {
                 driver.Close();
                 driver.Quit();
-                driver.Dispose();
-            }                
+                //driver.Dispose();
+                //driver = null;
+            }
         }
         #endregion
 
         #region methods
-        public void RunStep(Action action, string stepInfo, bool log = true,bool screenShot=true)
+        public void RunStep(Action action, string stepInfo, bool log = true, bool screenShot = true)
         {
             try
             {
@@ -253,7 +263,7 @@ namespace Automation
             }
 
         }
-        public void RunStep<T,T1>(Action<T, T1> action, T parmaeter1, T1 parmaeter2, string stepInfo, bool log = true, bool screenShot = true)
+        public void RunStep<T, T1>(Action<T, T1> action, T parmaeter1, T1 parmaeter2, string stepInfo, bool log = true, bool screenShot = true)
         {
             try
             {
@@ -261,7 +271,7 @@ namespace Automation
                 {
                     if (log)
                         StepLog(stepInfo, screenShot);
-                    action(parmaeter1, parmaeter2);                    
+                    action(parmaeter1, parmaeter2);
                 }
             }
             catch (Exception e)
@@ -272,7 +282,7 @@ namespace Automation
 
         }
 
-        public void RunStep<T, T1>(Action<T, T1,T1> action, T parmaeter1, T1 parmaeter2, T1 parmaeter3, string stepInfo, bool log = true, bool screenShot = true)
+        public void RunStep<T, T1>(Action<T, T1, T1> action, T parmaeter1, T1 parmaeter2, T1 parmaeter3, string stepInfo, bool log = true, bool screenShot = true)
         {
             try
             {
@@ -289,7 +299,7 @@ namespace Automation
                 throw new Exception("Exception : " + e.Message);
             }
         }
-        public void RunStep<T, T1,T2>(Action<T, T1, T1,T2> action, T parmaeter1, T1 parmaeter2, T1 parmaeter3, T2 parmaeter4, string stepInfo, bool log = true, bool screenShot = true)
+        public void RunStep<T, T1, T2>(Action<T, T1, T1, T2> action, T parmaeter1, T1 parmaeter2, T1 parmaeter3, T2 parmaeter4, string stepInfo, bool log = true, bool screenShot = true)
         {
             try
             {
@@ -308,16 +318,16 @@ namespace Automation
 
         }
 
-        private void StepLog(string stepInfo,bool screenShot)
+        private void StepLog(string stepInfo, bool screenShot)
         {
-            if(screenShot)
+            if (screenShot)
             {
                 test.Log(Status.Pass, $"(Step : {stepInfo}) " + test.AddScreenCaptureFromPath(SaveScreenShot(stepInfo)));
                 //Console.WriteLine("Step : " + stepInfo);
             }
             else
             {
-                test.Log(Status.Pass, "Step : " + stepInfo);  
+                test.Log(Status.Pass, "Step : " + stepInfo);
                 //Console.WriteLine("Step : " + stepInfo);
             }
 
@@ -352,12 +362,12 @@ namespace Automation
         {
             DataRow data = null;
             string directory = Path.Combine(AppDomain.CurrentDomain.BaseDirectory);
-            var filePath = directory +"TestData//"+ fileName;
+            var filePath = directory + "TestData//" + fileName;
             var dtContent = GetDataTableFromExcel(filePath);
             Console.WriteLine(" Data Read From File : " + fileName);
             for (int i = 0; i < dtContent.Rows.Count; i++)
             {
-                if ((dtContent.Rows[i])[0].ToString()==testName)
+                if ((dtContent.Rows[i])[0].ToString() == testName)
                 {
                     data = dtContent.Rows[i];
                     break;
@@ -395,7 +405,7 @@ namespace Automation
             }
         }
 
-        public Dictionary<string, object> GetTestData(string path,string testName, bool hasHeader = true)
+        public Dictionary<string, object> GetTestData(string path, string testName, bool hasHeader = true)
         {
             Dictionary<string, object> _dict = new Dictionary<string, object>();
             List<string> rowName = new List<string>();
@@ -409,7 +419,7 @@ namespace Automation
                 var ws = pck.Workbook.Worksheets.FirstOrDefault();
                 DataTable tbl = new DataTable();
                 foreach (var firstRowCell in ws.Cells[1, 1, 1, ws.Dimension.End.Column])
-                {                    
+                {
                     rowName.Add(hasHeader ? firstRowCell.Text : string.Format("Column{0}", firstRowCell.Start.Column));
                 }
                 var startRow = hasHeader ? 2 : 1;
@@ -419,8 +429,8 @@ namespace Automation
                     var wsRow = ws.Cells[rowNum, 1, rowNum, ws.Dimension.End.Column];
                     foreach (var cell in wsRow)
                     {
-                        if (cell.Text.ToString().Contains(testName))found = true;
-                        if (!found)break;
+                        if (cell.Text.ToString().Contains(testName)) found = true;
+                        if (!found) break;
                         values.Add(cell.Text);
                     }
                     if (found) break;
@@ -435,13 +445,13 @@ namespace Automation
         #endregion
 
         #region Read Parameters
-        
+
         string testParameterFile = "TestCase_Specific.xml";
         public void CollectSharedParameters()
         {
             string sharedFileName = "Parameter.xml";
             Parameter.Add<string>("SharedXML", sharedFileName);
-            var collectionCriteria = new List<string>() { "/PARAMETER/SHARED" };
+            var collectionCriteria = new List<string>() { "/PARAMETER/SHARED", "/PARAMETER/QUESTIONS" };
             XmlParameterCollector.Collect(sharedFileName, collectionCriteria);
 
             // Collect Environment Based
@@ -449,10 +459,14 @@ namespace Automation
             var client = Parameter.Get<string>("Client");
             collectionCriteria = new List<string>() { $"/PARAMETER/CLIENT/{client}/{environment}" };
             XmlParameterCollector.Collect(sharedFileName, collectionCriteria);
+
+            // Collect Test Case Specific Parameters
+            this.CollectTestSpecificParameters(TestName);
         }
-        public void CollectTestParameters()
+        public void CollectTestSpecificParameters(string testName)
         {
-            XmlParameterCollector.Collect(testParameterFile, new List<string>() { "" });
+            var collectionCriteria = new List<string>() { $"/PARAMETER/TESTSPECIFIC/{testName.Replace("(", "").Replace(")", "")}" };
+            XmlParameterCollector.Collect(testParameterFile, collectionCriteria);
         }
         #endregion
     }

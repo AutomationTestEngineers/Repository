@@ -1,5 +1,4 @@
 ﻿using AventStack.ExtentReports;
-using NUnit.Framework.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.IO;
