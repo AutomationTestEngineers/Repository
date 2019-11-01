@@ -33,10 +33,16 @@ namespace Configuration.SerializableParameters
                     City = c.City,
                     State = c.State,
                     Zip = c.Zip,
-                    Country = c.Country,
+                    Phone = c.Phone,
+                    PhoneType = c.PhoneType,
+                    Email = c.Email,
+                    ContactMethod = c.ContactMethod,
                     SSN = c.SSN,
+                    IDType = c.IDType,
                     DLNumber = c.DLNumber,
                     DLState = c.DLState,
+                    IssueDate = c.IssueDate,
+                    ExpDate = c.ExpDate
                 };
 
                 collections.Add(collection);
@@ -69,17 +75,35 @@ namespace Configuration.SerializableParameters
         [XmlAttribute("zip")]
         public string Zip { get; set; }
 
-        [XmlAttribute("country")]
-        public string Country { get; set; }
+        [XmlAttribute("phone")]
+        public string Phone { get; set; }
+
+        [XmlAttribute("phonetype")]
+        public string PhoneType { get; set; }
+
+        [XmlAttribute("email")]
+        public string Email { get; set; }
+
+        [XmlAttribute("contactmethod")]
+        public string ContactMethod { get; set; }        
 
         [XmlAttribute("ssn")]
         public string SSN { get; set; }
+
+        [XmlAttribute("idtype")]
+        public string IDType { get; set; }
 
         [XmlAttribute("dlnumber")]
         public string DLNumber { get; set; }
 
         [XmlAttribute("dlstate")]
         public string DLState { get; set; }
+
+        [XmlAttribute("issuedate")]
+        public string IssueDate { get; set; }
+
+        [XmlAttribute("expirydate")]
+        public string ExpDate { get; set; }
         #endregion
     }
 
@@ -92,9 +116,11 @@ namespace Configuration.SerializableParameters
         string City { get; set; }
         string State { get; set; }
         string Zip { get; set; }
-        string Country { get; set; }
         string SSN { get; set; }
+        string Phone { get; set; }
         string DLNumber { get; set; }
         string DLState { get; set; }
+        string IssueDate { get; set; }
+        string ExpDate { get; set; }
     }
 }

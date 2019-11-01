@@ -1,5 +1,6 @@
 ﻿using OpenQA.Selenium;
 using SeleniumExtras.PageObjects;
+using SeleniumExtras.WaitHelpers;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -20,37 +21,72 @@ namespace ObjectRepository.Pages
         [FindsBy(How = How.CssSelector, Using = "button[title='Add Checking']")]
         private IWebElement checking = null;
 
+        [FindsBy(How = How.CssSelector, Using = "button[id^='open-now-item']")]
+        private IList<IWebElement> openNow = null;
+
         [FindsBy(How = How.Id, Using = "courtesy-pay-checkbox")]
         private IWebElement courtesy_Checkbox = null;
 
         [FindsBy(How = How.Id, Using = "courtesy-pay-accepted-modal-i-agree-button-without-post")]
         private IWebElement iAgree = null;
 
-        [FindsBy(How = How.CssSelector, Using = "button[title='Add Certificate']")]
+        [FindsBy(How = How.XPath, Using = "//button[@title='Add Certificate' or @title='Add Share Certificate']")]
         private IWebElement certificate = null;
 
         [FindsBy(How = How.XPath, Using = "//div[@class='dropdown-menu show']/a")]
         private IList<IWebElement> dropDowns = null;
 
         [FindsBy(How = How.CssSelector, Using = "button[class='button_pn btnNext btn btn-primary']")]
-        private IWebElement next = null;
-        
+        private IWebElement next = null;        
 
         [FindsBy(How = How.CssSelector, Using = "button[title = 'Add Money Market']")]
         private IWebElement moneyMarket = null;
 
-        [FindsBy(How = How.CssSelector, Using = "button[title = 'Add Share Certificate']")]
-        private IWebElement shareCertificate = null;
-
         [FindsBy(How = How.CssSelector, Using = "button[title = 'Add Credit Card']")]
         private IWebElement creaditCard = null;
+
+        [FindsBy(How = How.XPath, Using = "(//div[@class='modal' and @id='disclosure-for-cc-modal']//button[@title='I agree' ])[1]")]
+        private IWebElement disclousure_iAgree = null;
 
 
         private bool Populate { get { return GenericUtils.IsValueOdd; } }
 
+        public void Discovey()
+        {            
+            //CHECKING
+            if (Populate)
+            {
+                checking.ClickCustom(driver);
+                openNow[GenericUtils.GetRandomNumber(0, openNow.Count-1)].ClickCustom(driver);
+                Wait(ExpectedConditions.ElementToBeClickable(moneyMarket));
+            }
+            Sleep(200);
+            
+            //Monet Market
+            if (Populate)
+            {
+                moneyMarket.ClickCustom(driver);
+                dropDowns[0].ClickCustom(driver);
+                Wait(ExpectedConditions.ElementToBeClickable(certificate));
+            }
+
+            //CERTIFICATE
+            if (Populate)
+                certificate.ClickCustom(driver);
+
+            //Credit Card
+            if (Populate)
+                creaditCard.ClickCustom(driver);
+
+            Sleep(200);
+            next.ClickCustom(driver);
+            if (disclousure_iAgree.Displayed())
+                disclousure_iAgree.ClickCustom(driver);
+        }
 
         public void RandomSelection()
         {
+            Sleep(500);
             //SAVINGS
             if (Populate)
                 if(saving.Displayed())
@@ -59,6 +95,7 @@ namespace ObjectRepository.Pages
             //CHECKING
             if (Populate)
             {
+                Wait(ExpectedConditions.ElementToBeClickable(checking));
                 checking.ClickCustom(driver);
                 if (dropDowns[1].Displayed())
                 {
@@ -113,7 +150,7 @@ namespace ObjectRepository.Pages
                     dropDowns[0].ClickCustom(driver);
                     break;
                 case "SHARE CERTIFICATE":
-                    shareCertificate.ClickCustom(driver);
+                    certificate.ClickCustom(driver);
                     break;
                 case "CREDIT CARD":
                     creaditCard.ClickCustom(driver);

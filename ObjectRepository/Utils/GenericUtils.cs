@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace ObjectRepository
 {
-    public static class GenericUtils
+    public class GenericUtils
     {
         public static bool IsValueOdd  {  get { return (new Random()).Next() % 2 != 0; }  }
 
@@ -24,6 +24,6 @@ namespace ObjectRepository
             date = date.AddDays(months);
             var outDateTime = format != null ? date.ToString(format, CultureInfo.InvariantCulture) : date.GetDateTimeFormats('d')[0].ToString(CultureInfo.InvariantCulture);
             return outDateTime;
-        }
+        }      
     }
 }

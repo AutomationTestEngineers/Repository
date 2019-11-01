@@ -182,7 +182,7 @@ namespace ObjectRepository
                 int count = Int16.Parse( Parameter.Get<string>("HighlightCount"));
                 for (int i = 0; i < count; i++)
                 {
-                    Thread.Sleep(3);
+                    Thread.Sleep(10);
                     (driver as IJavaScriptExecutor).ExecuteScript("arguments[0].setAttribute('style',arguments[1]);", element, "border: 5px solid blue;");
                     (driver as IJavaScriptExecutor).ExecuteScript("arguments[0].setAttribute('style',arguments[1]);", element, "border: 0px solid blue;");
                 }

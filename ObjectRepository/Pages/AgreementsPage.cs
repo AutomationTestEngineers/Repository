@@ -1,4 +1,5 @@
-﻿using OpenQA.Selenium;
+﻿using FluentAssertions;
+using OpenQA.Selenium;
 using SeleniumExtras.PageObjects;
 using SeleniumExtras.WaitHelpers;
 using System;
@@ -12,6 +13,9 @@ namespace ObjectRepository.Pages
         [FindsBy]
         private IWebElement msa = null;
 
+        [FindsBy(How = How.Id, Using = "e-sign-text")]
+        private IWebElement esignText = null;
+
         [FindsBy(How =How.Id,Using = "esign-agreement")]
         private IWebElement esignAgreemtLink= null;
 
@@ -23,7 +27,7 @@ namespace ObjectRepository.Pages
 
         [FindsBy(How = How.XPath, Using = "//a[text()='Truth in Savings Shares']")]
         private IWebElement truthInSavingShares = null;
-
+        
         [FindsBy(How = How.Id, Using = "ckbLandingAgree-0")]
         private IWebElement iAgreeChk = null;
 
@@ -35,6 +39,16 @@ namespace ObjectRepository.Pages
 
         [FindsBy(How = How.ClassName, Using = "navbar-header")]
         private IWebElement header = null;
+
+        public string GetMadatoryText()
+        {
+            if (esignText.Displayed())
+            {
+                esignText.HighlightElement(driver);
+                return esignText.Text;
+            }
+            return null;            
+        }
 
         public void GetStarted()
         {

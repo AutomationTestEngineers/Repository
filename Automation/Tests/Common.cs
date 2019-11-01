@@ -21,7 +21,7 @@ namespace Automation
     public class Common
     {
         #region fields
-        protected IWebDriver driver;
+        protected IWebDriver driver { get; set; }
         private Exception _exception;
         protected static ExtentReports extent;
         protected static ExtentHtmlReporter htmlReporter;
@@ -201,8 +201,9 @@ namespace Automation
             {
                 driver.Close();
                 driver.Quit();
-                //driver.Dispose();
-                //driver = null;
+                driver.Dispose();
+                driver = null;
+                _exception = null;
             }
         }
         #endregion

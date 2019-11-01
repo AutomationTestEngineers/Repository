@@ -1,4 +1,5 @@
 ﻿using Configuration;
+using FluentAssertions;
 using NUnit.Framework;
 using ObjectRepository;
 using System;
@@ -28,12 +29,14 @@ namespace Automation
             RunStep(HomePage.GoToPage, "membership", "Goto MemeberShip Page");
             RunStep(() =>
             {
+                AgreementsPage.GetMadatoryText().Should().NotBeNullOrEmpty();
                 AgreementsPage.VerifyLinks("E-Sign Agreement");
+                AgreementsPage.GetMadatoryText().Should().BeNullOrEmpty();
                 AgreementsPage.VerifyLinks("Membership Agreement");
-            }, "Verify All HyperLinks are working", true, false);
+            }, "Verify Required E-sign Agreement", true, false);
             RunStep(AgreementsPage.GetStarted, "Click GetStarted Button");
-            RunStep<string>(ProductsPage.ChooseAccountForDiscovery, "CHECKING", "BAsic", "Choose Savings Account ");
-            RunStep(ApplicantsPage.PopulateData, true, true, true, false, "Populate Fields On Applicants page");
+            RunStep(ProductsPage.Discovey, "Choose Account");            
+            RunStep(ApplicantsPage.PopulateData,true, true, true, false, "Populate Fields On Applicants page");
             //RunStep(ReviewPage.CheckAll, "Check All Checbox and Continue");
             //RunStep(FundingPage.EnterCreditCard, "Enter Credit Card Details");
             //RunStep(VerificationPage.GiveAnswersForQuestions, "Answer For Question");
@@ -45,7 +48,7 @@ namespace Automation
         public void Auto_Loan()
         {
             RunStep(HomePage.GoToPage, "loans", "Goto MemeberShip Page");
-            RunStep(SelectionPage.SelectAccountType, "TEEN", "Select Personal Account Type");
+            RunStep(SelectionPage.SelectLoanType, "TEEN", "Select Personal Account Type");
 
         }
         #endregion

@@ -12,6 +12,9 @@ namespace ObjectRepository.Pages
     {
         public SelectionPage(IWebDriver driver) : base(driver) { }
 
+        [FindsBy]
+        private IWebElement account_number_input = null;
+
         [FindsBy(How = How.CssSelector, Using = "div[id^='account-sub-type'] td[id^='account-sub-type-icon']")]
         private IList<IWebElement> accountType = null;
 
@@ -39,6 +42,11 @@ namespace ObjectRepository.Pages
         [FindsBy(How = How.Id, Using = "Student-Loan")]
         private IWebElement studentLoan = null;
 
+        [FindsBy(How = How.CssSelector, Using = "div#auto-modal button")]
+        private IList<IWebElement> autoLoanOptions = null;
+
+        
+
         public void SelectAccountType(string type)
         {
             switch (type.ToUpper())
@@ -61,27 +69,39 @@ namespace ObjectRepository.Pages
         {
             switch (type.ToLower())
             {
-                //case "":
-                //    break;
-                //case "":
-                //    break;
-                //case "":
-                //    break;
-                //case "":
-                //    break;
-                //case "":
-                //    break;
-                //case "":
-                //    break;
-                //case "":
-                //    break;
-                //case "":
-                //    break;
-                //case "":
-                //    break;
+                case "auto":
+                    autoLoan.ClickCustom(driver);
+                    autoLoanOptions.FirstOrDefault().ClickCustom(driver);
+                    break;
+                case "pesrsonal":
+                    personalLoan.ClickCustom(driver);
+                    break;
+                case "creditcard":
+                    creditcard.ClickCustom(driver);
+                    break;
+                case "othervehicles":
+                    otherVehicles.ClickCustom(driver);
+                    break;
+                case "secured":
+                    securedLoan.ClickCustom(driver);
+                    break;
+                case "homequity":
+                    homeEquityLoan.ClickCustom(driver);
+                    break;
+                case "firstmortgage":
+                    firstMortgageLoan.ClickCustom(driver);
+                    break;
+                case "student":
+                    studentLoan.ClickCustom(driver);
+                    break;
                 default:
                     break;
             }
+        }
+    
+        public void Member()
+        {
+            account_number_input.SendKeysWrapper("", driver);
         }
     }
 }

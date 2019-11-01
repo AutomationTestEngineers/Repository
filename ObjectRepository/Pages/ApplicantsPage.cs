@@ -78,45 +78,48 @@ namespace ObjectRepository.Pages
         private IWebElement successMsgDLBack = null;
 
 
-        public void PopulateData(bool primaryWithDriving = false,bool employment = false,bool jointOwner = false,bool benificiary = false)
+        public void PopulateData(bool license = true,bool employment = false,bool jointOwner = false,bool benificiary = false)
         {
             var primary = Parameter.Get<List<ICollection>>("Primary");
             int random = GenericUtils.GetRandomNumber(0, primary.Count);
-            var section = primary[random];
+            var primaryDetials = primary[random];
+            Parameter.Add<ICollection>("PrimaryDetails_Selected",primaryDetials);
+            var jointDetails = primary.Where(a=>a.FirstName!= primaryDetials.FirstName).FirstOrDefault();
+            Parameter.Add<ICollection>("JoinDetails_Selected", jointDetails);
+            var benificiaryDetails = primary.Where(a => a.FirstName != primaryDetials.FirstName && a.FirstName != jointDetails.FirstName).FirstOrDefault();
+            Parameter.Add<ICollection>("BenificiaryDetails_Selected", benificiaryDetails);
 
-            if (primaryWithDriving)
-                PrimaryDetailsWithdDrivingLicense(section);
+            if (license)
+                PrimaryDetailsWithdDrivingLicense(primaryDetials);
             else
-                this.PrimaryDetails(section);
+                this.PrimaryDetails(primaryDetials);
 
             if (employment)
-                this.EmploymentInfo();
-
-            if (jointOwner)
             {
-                var uniqSSN = primary.Where(a => a.SSN != Parameter.Get<string>("JointOwnerSSN")).FirstOrDefault().SSN.ToString();
-                var ssn = section.SSN == Parameter.Get<string>("JointOwnerSSN") ? uniqSSN : Parameter.Get<string>("JointOwnerSSN");
-                this.AddJointOwner(ssn);
+                var emp = FakeData.RandomEmployee();
+                Parameter.Add<Employee>("Employee", emp);
+                this.EmploymentInfo(emp);
             }                
 
+            if (jointOwner) 
+                this.AddJointOwner(jointDetails);
+
             if (benificiary)
-            {
-                var uniqSSN = primary.Where(a => a.SSN != Parameter.Get<string>("BenificiarySSN")).LastOrDefault().SSN.ToString();
-                var ssn = section.SSN== Parameter.Get<string>("BenificiarySSN")? uniqSSN : Parameter.Get<string>("BenificiarySSN");               
-                this.AddBeneficiary(ssn);
-            }
-               
+                this.AddBeneficiary(benificiaryDetails);
+
             next.ClickCustom(driver);
 
             this.Eligibility();
         }
 
-        public void EmploymentInfo()
-        {
-            pri_employertxt.SendKeysWrapper("Dave", driver);
-            pri_occupation.SendKeysWrapper("Dave", driver);
-            pri_employer_street_address.SendKeysWrapper("Dave", driver);
-            pri_employer_zip.SendKeysWrapper("Dave", driver);
+        public void EmploymentInfo(Employee emp)
+        {            
+            pri_employertxt.SendKeysWrapper(emp.Employer, driver);
+            pri_occupation.SendKeysWrapper(emp.Occupation, driver);
+            pri_employer_street_address.SendKeysWrapper(emp.Address, driver);
+            pri_employer_zip.SendKeysWrapper(emp.Zip, driver);
+            pri_employer_zip.SendKeys(Keys.Tab);
+            Sleep(200);
         }
 
         public void PrimaryDetails(ICollection details)
@@ -131,10 +134,10 @@ namespace ObjectRepository.Pages
                 {
                     pri_date_of_birth.SendKeysWrapper(details.DOB, driver, true);
                     pri_date_of_birth.SendKeys(Keys.Tab);
-                    if (FindBy(By.Id("pri_date_of_birth-error"),1,true)!=null)
+                    if (FindBy(By.Id("pri_date_of_birth-error"),3,true)!=null)
                     {
                        var a = Int16.Parse(new String(FindBy(By.Id("pri_date_of_birth-error")).Text.Where(Char.IsDigit).ToArray()));
-                        pri_date_of_birth.SendKeysWrapper(GenericUtils.GenerateDate(0, 0, -a+-2), driver, true);
+                        pri_date_of_birth.SendKeysWrapper(GenericUtils.GenerateDate(0, 0, -a+2), driver, true);
                         pri_date_of_birth.SendKeys(Keys.Tab);
                     }
 
@@ -177,36 +180,37 @@ namespace ObjectRepository.Pages
             }
         }
 
-        public void AddJointOwner(string ssn)
+        public void AddJointOwner(ICollection details)
         {
             if(addJoinOwner.Displayed())
                 addJoinOwner.ClickCustom(driver);                
-            co_2_first_name.SendKeysWrapper(Parameter.Get<string>("JoinOwnertFirstName"), driver);
-            co_2_last_name.SendKeysWrapper(Parameter.Get<string>("JointOwnerLastName"), driver);
-            co_2_date_of_birth.SendKeysWrapper(Parameter.Get<string>("JoinDOB"), driver,true);
-            co_2_street_address.SendKeysWrapper(Parameter.Get<string>("JoinStreetAddress"), driver);
-            co_2_zip.SendKeysWrapper(Parameter.Get<string>("JointOwnerZip"), driver);
-            co_2_primary_phone.SendKeysWrapper(Parameter.Get<string>("JointOwnerPrimaryPhone"), driver);
-            co_2_phone_type.SelectDropDown(driver, Parameter.Get<string>("JointOwnerPrimaryType"));
-            co_2_email_address.SendKeysWrapper(Parameter.Get<string>("JointOwnerEmail"), driver);
-            co_2_contact_method.SelectDropDown(driver, Parameter.Get<string>("JointOwnerContactMethod"));
-            co_2_ssn.SendKeysWrapper(ssn, driver);
-            co_2_idtype.SelectDropDown(driver, Parameter.Get<string>("JointOwnerIdType"));
-            co_2_state_id.SelectDropDown(driver, Parameter.Get<string>("JointOwnerStateId"));
-            co_2_identificaton_number.SendKeysWrapper(Parameter.Get<string>("JointOwnerIdentificationNumber"), driver);
-            co_2_idissue_date.SendKeysWrapper(Parameter.Get<string>("JointOwnerIdIssueDate"), driver,true);
-            co_2_id_exp_date.SendKeysWrapper(Parameter.Get<string>("JointOwnerIdExpDate"), driver,true);
+            co_2_first_name.SendKeysWrapper(details.FirstName, driver);
+            co_2_last_name.SendKeysWrapper(details.LastName, driver);
+            co_2_date_of_birth.SendKeysWrapper(details.DOB, driver,true);
+            co_2_street_address.SendKeysWrapper(details.Address, driver);
+            co_2_zip.SendKeysWrapper(details.Zip, driver);
+            co_2_primary_phone.SendKeysWrapper(Parameter.Get<string>("PrimaryPhone"), driver);
+            co_2_phone_type.SelectDropDown(driver, Parameter.Get<string>("PrimaryPhoneType"));
+            co_2_email_address.SendKeysWrapper(Parameter.Get<string>("PrimaryEmail"), driver);
+            co_2_contact_method.SelectDropDown(driver, Parameter.Get<string>("PrimaryContactMethod"));
+            co_2_ssn.SendKeysWrapper(details.SSN, driver,true);
+            co_2_idtype.SelectDropDown(driver, Parameter.Get<string>("IdType"));
+            co_2_state_id.SelectDropDown(driver, details.DLState);
+            co_2_identificaton_number.SendKeysWrapper(details.DLNumber, driver);
+            co_2_idissue_date.SendKeysWrapper(details.IssueDate, driver,true);
+            co_2_id_exp_date.SendKeysWrapper(details.ExpDate, driver,true);
         }
 
-        public void AddBeneficiary(string ssn)
+        public void AddBeneficiary(ICollection details)
         {
             addBenificiary.ClickCustom(driver);
-            bene_first_name_0.SendKeysWrapper(Parameter.Get<string>("BenificiaryFirstName"), driver);
-            txt_bene_last_name_0.SendKeysWrapper(Parameter.Get<string>("BenificiaryLastName"), driver);
-            beneficiaryDob_0.SendKeysWrapper(Parameter.Get<string>("BenificiaryDOB"), driver,true);
-            bene_relation_0.SelectComboBox(null,driver);
-            pay_on_death_ratio_0.SendKeysWrapper(Parameter.Get<string>("BenificiaryPayOnDeathRation"), driver);
-            bene_ssn_0.SendKeysWrapper(ssn, driver);
+            bene_first_name_0.SendKeysWrapper(details.FirstName, driver);
+            txt_bene_last_name_0.SendKeysWrapper(details.LastName, driver);
+            beneficiaryDob_0.SendKeysWrapper(details.DOB, driver, true);
+            bene_relation_0.SelectComboBox(null, driver);
+            pay_on_death_ratio_0.SendKeysWrapper("100", driver);
+            bene_ssn_0.SendKeysWrapper(details.SSN, driver);
+
         }
 
         public void PrimaryDetailsWithdDrivingLicense(ICollection details)
@@ -232,13 +236,17 @@ namespace ObjectRepository.Pages
             // Primary Details
             if(pri_first_name.GetAttribute("value").Contains("D")) pri_first_name.SendKeysWrapper("Dave",driver);
             if (pri_cell_phone.Displayed())
-                pri_cell_phone.SendKeysWrapper(Parameter.Get<string>("PrimaryCell"), driver);
+            {
+                pri_cell_phone.SendKeysWrapper(Parameter.Get<string>("PrimaryCell"), driver,true);
+            }                
             if (pri_primary_phone.Displayed())
-                pri_primary_phone.SendKeysWrapper(Parameter.Get<string>("PrimaryPhone"), driver);
-
-            pri_phone_type.SelectDropDown(driver, Parameter.Get<string>("PrimaryPhoneType"));
+            {
+                pri_primary_phone.SendKeysWrapper(Parameter.Get<string>("PrimaryPhone"), driver,true);
+                pri_phone_type.SelectDropDown(driver, Parameter.Get<string>("PrimaryPhoneType"));
+            }            
             pri_email_address.SendKeysWrapper(Parameter.Get<string>("PrimaryEmail"), driver);
-            pri_contact_method.SelectDropDown(driver, Parameter.Get<string>("PrimaryContactMethod"));
+            if (pri_contact_method.Displayed())
+                pri_contact_method.SelectDropDown(driver, Parameter.Get<string>("PrimaryContactMethod"));
             if (!string.IsNullOrEmpty(details.SSN))
                 pri_ssn.SendKeysWrapper(details.SSN, driver);
         }

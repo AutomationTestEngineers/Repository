@@ -1,4 +1,6 @@
-﻿using OpenQA.Selenium;
+﻿using Configuration;
+using Configuration.SerializableParameters;
+using OpenQA.Selenium;
 using SeleniumExtras.PageObjects;
 using System;
 using System.Collections.Generic;
@@ -13,7 +15,8 @@ namespace ObjectRepository.Pages
         public ReviewPage(IWebDriver driver) : base(driver) { }
 
         [FindsBy]
-        private IWebElement referral_source = null;
+        private IWebElement referral_source = null, fullName = null, dateOfBirth = null, address_without_address_2 = null,
+            cellPhone = null, email = null, idNumber = null, idIssuingState = null, idIssueDate = null, idExpirationDate = null, ssn = null;
 
         [FindsBy(How = How.Name, Using = "checkAllButton")]
         private IWebElement checkAll = null;
@@ -28,6 +31,9 @@ namespace ObjectRepository.Pages
         private IWebElement checkBox = null;
 
 
+        string primarySections = "//h3[text()='Primary Applicant']/../div[contains(@class,'review-section')]";
+
+
         public void CheckAllAndContinue()
         {
             referral_source.SelectComboBox(null,driver);
@@ -37,6 +43,13 @@ namespace ObjectRepository.Pages
             Signature();
             checkBox.ClickCustom(driver);
             confirmAndContinueButton.ClickCustom(driver);
+        }
+
+        public void ReviewInformation()
+        {
+            var primaryDetials = Parameter.Get<ICollection>("PrimaryDetails_Selected");            
+            var jointDetails = Parameter.Get<ICollection>("JoinDetails_Selected");
+            var benificiaryDetails = Parameter.Get<ICollection>("BenificiaryDetails_Selected"); 
         }
 
         public void ReviewConfirmation()
