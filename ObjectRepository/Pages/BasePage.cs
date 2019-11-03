@@ -8,6 +8,7 @@ using System.Threading;
 using Configuration;
 using System.Collections.Generic;
 using ExpectedConditions = SeleniumExtras.WaitHelpers.ExpectedConditions;
+using FluentAssertions;
 
 namespace ObjectRepository.Pages
 {
@@ -38,16 +39,19 @@ namespace ObjectRepository.Pages
 
         public void Wait<TResult>(Func<IWebDriver, TResult> condition, int seconds = 15)
         {
-            var wait = new WebDriverWait(driver, TimeSpan.FromSeconds(seconds));
-            wait.PollingInterval = TimeSpan.FromMilliseconds(500);
-            wait.IgnoreExceptionTypes(typeof(Exception));
-            wait.Until(condition);
+            try
+            {
+                var wait = new WebDriverWait(driver, TimeSpan.FromSeconds(seconds));
+                wait.PollingInterval = TimeSpan.FromMilliseconds(500);
+                wait.IgnoreExceptionTypes(typeof(Exception));
+                wait.Until(condition);
+            }catch(Exception e) { }            
         }
         public IWebElement FindBy(By by, int i = 5, bool exist = false)
         {
             try
             {
-                if (exist) { Sleep(i * 500); return driver.FindElement(by); }
+                if (exist) { Sleep(i * 300); return driver.FindElement(by); }
                 Wait(ExpectedConditions.ElementExists(by), i);
                 return driver.FindElement(by);
             }
@@ -86,6 +90,12 @@ namespace ObjectRepository.Pages
         public void Sleep(int timeout = 1000)
         {
             Thread.Sleep(timeout);
+        }
+
+        public void Verify(bool condition,string name,string actual,string expected)
+        {
+            condition.Should().BeTrue($"[{name}] => Actual [{actual}]  Expected[{expected}]");
+            Config.LogVerify($"{name} : Actual [{actual}]  Expected [{expected}]");
         }
     }
 }

@@ -72,8 +72,9 @@ namespace Configuration
                  .RuleFor(pi => pi.Occupation, a => a.Name.JobType())
                  .RuleFor(pi => pi.Address, a => a.Address.StreetAddress())
                  .RuleFor(pi => pi.Suite, a => a.Address.StreetName())
-                 .RuleFor(pi => pi.Zip, a => a.Address.ZipCode()).Generate();
-            
+                 .RuleFor(pi => pi.Zip, a => "99501")
+                 .RuleFor(pi => pi.Phone, a => Parameter.Get<string>("Cell")).Generate();
+
         }
         
     }

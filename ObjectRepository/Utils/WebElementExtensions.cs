@@ -36,6 +36,14 @@ namespace ObjectRepository
             return (By)bysFromElement[0];
         }
 
+        public static IWebElement find(this IWebElement element,By by)
+        {
+            try
+            {
+                return element.FindElement(by);
+            }
+            catch { return null; }
+        }
         public static bool Displayed(this IWebElement element)
         {
             try
@@ -100,6 +108,18 @@ namespace ObjectRepository
             return select.SelectedOption.Text.ToString().Trim();
         }
 
+        public static string GetSelected(this IWebElement element,bool value = true)
+        {
+            SelectElement select = new SelectElement(element);
+            if (value)
+            {
+                var a = select.SelectedOption.Text.ToString().Trim();
+                var val = element.FindElements(By.TagName("option")).Where(opt => opt.Text.Contains(a)).FirstOrDefault().GetAttribute("value");
+                return val;
+            }
+            return select.SelectedOption.Text.ToString().Trim();
+        }
+
         public static IList<string> GetOptions(this IWebElement element, IWebDriver driver)
         {
             var options = element.FindElements(By.TagName("option"));
@@ -124,6 +144,7 @@ namespace ObjectRepository
             catch (Exception e)
             {
                 Console.WriteLine($"[Root Cause] : While Performing Click On [{element.GetLocator()}]");
+                Console.WriteLine(e.StackTrace);
                 throw new Exception(e.Message);
             }
 
@@ -182,7 +203,7 @@ namespace ObjectRepository
                 int count = Int16.Parse( Parameter.Get<string>("HighlightCount"));
                 for (int i = 0; i < count; i++)
                 {
-                    Thread.Sleep(10);
+                    Thread.Sleep(3);
                     (driver as IJavaScriptExecutor).ExecuteScript("arguments[0].setAttribute('style',arguments[1]);", element, "border: 5px solid blue;");
                     (driver as IJavaScriptExecutor).ExecuteScript("arguments[0].setAttribute('style',arguments[1]);", element, "border: 0px solid blue;");
                 }
@@ -191,10 +212,14 @@ namespace ObjectRepository
 
         public static void Wait<TResult>(Func<IWebDriver, TResult> condition, IWebDriver driver, int seconds = 20)
         {
-            var wait = new WebDriverWait(driver, TimeSpan.FromSeconds(seconds));
-            wait.PollingInterval = TimeSpan.FromMilliseconds(500);
-            wait.IgnoreExceptionTypes(typeof(Exception));
-            wait.Until(condition);
+            try
+            {
+                var wait = new WebDriverWait(driver, TimeSpan.FromSeconds(seconds));
+                wait.PollingInterval = TimeSpan.FromMilliseconds(500);
+                wait.IgnoreExceptionTypes(typeof(Exception));
+                wait.Until(condition);
+            }
+            catch { }            
         }
 
         public static void ElementToBeClickable(this IWebElement element, IWebDriver driver, int timeOut = 10)

@@ -17,6 +17,27 @@ namespace Configuration
         //public static string PageLoad => ConfigurationManager.AppSettings["PageLoad"];        
         //public static string ScreenBusy => ConfigurationManager.AppSettings["ScreenBusy"];
         //public static bool Highlight => bool.Parse(ConfigurationManager.AppSettings["Highlight"]);
+
+        public static void LogInfo(string message)
+        {
+            Console.WriteLine("[Info] : "+message);
+        }
+        public static void LogVerify(string message)
+        {
+            Console.WriteLine("[Verify] : " + message);
+        }
+        public static void LogMessage(string message)
+        {
+            Console.WriteLine("[Message] : " + message);
+        }
+        public static void Log(string message)
+        {
+            string log = ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>";            
+            Console.WriteLine(log);
+            Console.WriteLine(message);
+            Console.WriteLine(log);
+        }
+
     }     
 
     public class Questions

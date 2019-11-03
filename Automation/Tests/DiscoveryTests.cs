@@ -24,7 +24,7 @@ namespace Automation
 
         #region TestCases
         [Test, Category("MEMBERSHIP"), Category("DISCOVERY")]
-        public void ApplyMemberShip()
+        public void ApplyMemberShip_For_Discovery()
         {
             RunStep(HomePage.GoToPage, "membership", "Goto MemeberShip Page");
             RunStep(() =>
@@ -35,12 +35,13 @@ namespace Automation
                 AgreementsPage.VerifyLinks("Membership Agreement");
             }, "Verify Required E-sign Agreement", true, false);
             RunStep(AgreementsPage.GetStarted, "Click GetStarted Button");
-            RunStep(ProductsPage.Discovey, "Choose Account");            
-            RunStep(ApplicantsPage.PopulateData,true, true, true, false, "Populate Fields On Applicants page");
-            //RunStep(ReviewPage.CheckAll, "Check All Checbox and Continue");
-            //RunStep(FundingPage.EnterCreditCard, "Enter Credit Card Details");
-            //RunStep(VerificationPage.GiveAnswersForQuestions, "Answer For Question");
-            //RunStep(ConfirmationPage.VeriyfConfirmation, "Verify Confirmation Message");
+            RunStep(ProductsPage.Discovey, "Choose Account");
+            RunStep(ApplicantsPage.PopulateData, true, true, true, false, "Populate Fields On Applicants page");
+            RunStep(ReviewPage.Review, "ReviewPage");
+            RunStep(ReviewPage.CheckAllAndContinue, "Check All Checbox and Continue");
+            RunStep<string>(FundingPage.Payment, null, "Enter Payment Details");
+            RunStep(VerificationPage.AnswersForTheGivenQuestions, "Answer For Question");
+            RunStep(ConfirmationPage.VeriyfConfirmation, "Verify Confirmation Message");
         }
 
 

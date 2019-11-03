@@ -63,6 +63,9 @@ namespace Configuration.SerializableParameters
         [XmlAttribute("dob")]
         public string DOB { get; set; }
 
+        [XmlAttribute("gender")]
+        public string Gender { get; set; }
+
         [XmlAttribute("address")]
         public string Address { get; set; }
 
@@ -99,11 +102,17 @@ namespace Configuration.SerializableParameters
         [XmlAttribute("dlstate")]
         public string DLState { get; set; }
 
+        [XmlAttribute("stateselected")]
+        public string StateSelected { get; set; }
+
         [XmlAttribute("issuedate")]
         public string IssueDate { get; set; }
 
         [XmlAttribute("expirydate")]
         public string ExpDate { get; set; }
+
+        [XmlAttribute("maidenname")]
+        public string MaidenName { get; set; }
         #endregion
     }
 
@@ -112,15 +121,19 @@ namespace Configuration.SerializableParameters
         string FirstName { get; set; }
         string LastName { get; set; }
         string DOB { get; set; }
+        string Gender { get; set; }
         string Address { get; set; }
         string City { get; set; }
         string State { get; set; }
         string Zip { get; set; }
         string SSN { get; set; }
         string Phone { get; set; }
+        string IDType { get; set; }
         string DLNumber { get; set; }
         string DLState { get; set; }
+        string StateSelected { get; set; }
         string IssueDate { get; set; }
         string ExpDate { get; set; }
+        string MaidenName { get; set; }
     }
 }

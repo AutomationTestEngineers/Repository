@@ -161,11 +161,7 @@ namespace Automation
         [SetUp]
         public virtual void Initialize()
         {
-            test = extent.CreateTest(this.TestName);
-            //_testData = GetExcel_Data_With_TestName("TestData.xlsx", TestContext.CurrentContext.Test.Name);
-            ////string directory = Path.Combine(AppDomain.CurrentDomain.BaseDirectory);
-            ////var test1 = GetTestData(directory+"TestData\\TestData.xlsx", TestContext.CurrentContext.Test.Name);
-            //driver = (new WebDriver()).InitDriver(_testData[1].ToString());
+            test = extent.CreateTest(this.TestName);            
             Parameter.Clear();
         }
 
@@ -323,8 +319,9 @@ namespace Automation
         {
             if (screenShot)
             {
-                test.Log(Status.Pass, $"(Step : {stepInfo}) " + test.AddScreenCaptureFromPath(SaveScreenShot(stepInfo)));
+                //test.Log(Status.Pass, $"(Step : {stepInfo}) " + test.AddScreenCaptureFromPath(SaveScreenShot(stepInfo)));
                 //Console.WriteLine("Step : " + stepInfo);
+                test.Log(Status.Pass, "Step : " + stepInfo);
             }
             else
             {

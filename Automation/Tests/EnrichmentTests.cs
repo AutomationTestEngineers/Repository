@@ -24,7 +24,7 @@ namespace Automation
 
         #region TestCases
 
-        [Test, Order(1), Category("PERSONAL"), Category("MEMBERSHIP")]
+        [TestCase, Category("PERSONAL"), Category("MEMBERSHIP")]
         public void ApplyMemberShip_For_Enrichment_Personal()
         {
             RunStep(HomePage.GoToPage, "membership", "Goto MemeberShip Page");
@@ -38,44 +38,35 @@ namespace Automation
             RunStep(AgreementsPage.GetStarted, "Click GetStarted Button");
             RunStep(SelectionPage.SelectAccountType, "PERSONAL", "Select Personal Account Type");
             RunStep(ProductsPage.RandomSelection, "Choose Account");
-            RunStep(ApplicantsPage.PopulateData,true, false, true, true, "Populate Fields On Applicants page");
-            RunStep(ReviewPage.CheckAllAndContinue, "Check All Checbox and Continue");
-            RunStep<string>(FundingPage.Payment,null, "Enter Credit Card Details");
-            RunStep(VerificationPage.AnswersForTheGivenQuestions, "Answer For Question");
-            RunStep(ConfirmationPage.VeriyfConfirmation, "Verify Confirmation Message");
-        }
-
-        [Test, Order(2), Category("PERSONAL"), Category("MEMBERSHIP")]
-        public void TobeFailed()
-        {
-            // To Avoid the socket exception
-            RunStep(HomePage.GoToPage, "membership", "Goto MemeberShip Page", true, false);
-            RunStep(AgreementsPage.GetStarted, "Click GetStarted Button");
-        }
-
-        [Test, Category("TEEN"), Category("MEMBERSHIP")]
-        public void ApplyMemberShip_For_Enrichment_Teen()
-        {
-            RunStep(HomePage.GoToPage, "membership", "Goto MemeberShip Page", true, false);
-            //RunStep(() =>
-            // {
-            //     AgreementsPage.VerifyLinks("Terms And Conditions");
-            //     AgreementsPage.VerifyLinks("E-Sign Agreement");
-            //     AgreementsPage.VerifyLinks("Truth Insaving Certificates");
-            //     AgreementsPage.VerifyLinks("Truth Insaving Shares");
-            // }, "Verify All HyperLinks are working", true, false);
-            RunStep(AgreementsPage.GetStarted, "Click GetStarted Button");
-            RunStep(SelectionPage.SelectAccountType, "TEEN", "Select Personal Account Type");
-            RunStep(ProductsPage.RandomSelection, "Choose Account");
-            Parameter.Add<string>("PrimaryDOB", GenericUtils.GenerateDate(0, 0, -18));
-            RunStep(ApplicantsPage.PopulateData,false, false, true, true, "Populate Fields On Applicants page");
+            RunStep(ApplicantsPage.PopulateData, true, false, true, true, "Populate Fields On Applicants page");
             RunStep(ReviewPage.CheckAllAndContinue, "Check All Checbox and Continue");
             RunStep<string>(FundingPage.Payment, null, "Enter Credit Card Details");
             RunStep(VerificationPage.AnswersForTheGivenQuestions, "Answer For Question");
             RunStep(ConfirmationPage.VeriyfConfirmation, "Verify Confirmation Message");
         }
 
-        [Test, Category("YOUTH"), Category("MEMBERSHIP")]
+        [TestCase, Category("TEEN"), Category("MEMBERSHIP")]
+        public void ApplyMemberShip_For_Enrichment_Teen()
+        {
+            RunStep(HomePage.GoToPage, "membership", "Goto MemeberShip Page", true, false);
+            RunStep(() =>
+             {
+                 AgreementsPage.VerifyLinks("Terms And Conditions");
+                 AgreementsPage.VerifyLinks("E-Sign Agreement");
+                 AgreementsPage.VerifyLinks("Truth Insaving Certificates");
+                 AgreementsPage.VerifyLinks("Truth Insaving Shares");
+             }, "Verify All HyperLinks are working", true, false);
+            RunStep(AgreementsPage.GetStarted, "Click GetStarted Button");
+            RunStep(SelectionPage.SelectAccountType, "TEEN", "Select Teen Account Type");
+            RunStep(ProductsPage.RandomSelection, "Choose Account");
+            RunStep(ApplicantsPage.PopulateData, false, false, true, true, "Populate Fields On Applicants page");
+            RunStep(ReviewPage.CheckAllAndContinue, "Check All Checbox and Continue");
+            RunStep<string>(FundingPage.Payment, null, "Enter Credit Card Details");
+            RunStep(VerificationPage.AnswersForTheGivenQuestions, "Answer For Question");
+            RunStep(ConfirmationPage.VeriyfConfirmation, "Verify Confirmation Message");
+        }
+
+        [TestCase, Category("YOUTH"), Category("MEMBERSHIP")]
         public void ApplyMemberShip_For_Enrichment_Youth()
         {
             RunStep(HomePage.GoToPage, "membership", "Goto MemeberShip Page");
@@ -87,9 +78,8 @@ namespace Automation
                 AgreementsPage.VerifyLinks("Truth Insaving Shares");
             }, "Verify All HyperLinks are working", true, false);
             RunStep(AgreementsPage.GetStarted, "Click GetStarted Button");
-            RunStep(SelectionPage.SelectAccountType, "YOUTH", "Select Personal Account Type");
+            RunStep(SelectionPage.SelectAccountType, "YOUTH", "Select Youth Account Type");
             RunStep(ProductsPage.RandomSelection, "Choose Account");
-            Parameter.Add<string>("PrimaryDOB", GenericUtils.GenerateDate(0, 0, -11));
             RunStep(ApplicantsPage.PopulateData, false, false, true, true, "Populate Fields On Applicants page");
             RunStep(ReviewPage.CheckAllAndContinue, "Check All Checbox and Continue");
             RunStep<string>(FundingPage.Payment, null, "Enter Credit Card Details");

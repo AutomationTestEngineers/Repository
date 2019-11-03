@@ -1,4 +1,5 @@
-﻿using OpenQA.Selenium;
+﻿using Configuration;
+using OpenQA.Selenium;
 using SeleniumExtras.PageObjects;
 using SeleniumExtras.WaitHelpers;
 using System;
@@ -52,7 +53,8 @@ namespace ObjectRepository.Pages
         private bool Populate { get { return GenericUtils.IsValueOdd; } }
 
         public void Discovey()
-        {            
+        {
+            var selection = new List<string>();         
             //CHECKING
             if (Populate)
             {
@@ -60,11 +62,10 @@ namespace ObjectRepository.Pages
                 openNow[GenericUtils.GetRandomNumber(0, openNow.Count-1)].ClickCustom(driver);
                 Wait(ExpectedConditions.ElementToBeClickable(moneyMarket));
             }
-            Sleep(200);
-            
+            Sleep(200);            
             //Monet Market
             if (Populate)
-            {
+            {                
                 moneyMarket.ClickCustom(driver);
                 dropDowns[0].ClickCustom(driver);
                 Wait(ExpectedConditions.ElementToBeClickable(certificate));
@@ -77,8 +78,9 @@ namespace ObjectRepository.Pages
             //Credit Card
             if (Populate)
                 creaditCard.ClickCustom(driver);
-
-            Sleep(200);
+            Sleep(1000);
+            var section = FindElements(By.XPath("//div[@class='product-header']/h3/span | //div[@class='product-header']/h3/sup/..")).Select(a=>a.Text.Trim()).ToList();
+            Parameter.Add("Products", section);
             next.ClickCustom(driver);
             if (disclousure_iAgree.Displayed())
                 disclousure_iAgree.ClickCustom(driver);
@@ -95,9 +97,9 @@ namespace ObjectRepository.Pages
             //CHECKING
             if (Populate)
             {
-                Wait(ExpectedConditions.ElementToBeClickable(checking));
-                checking.ClickCustom(driver);
-                if (dropDowns[1].Displayed())
+                if (checking.Displayed())
+                    checking.ClickCustom(driver);
+                if (FindBy(By.XPath("(//div[@class='dropdown-menu show']/a)[1]"),2).Displayed())
                 {
                     dropDowns[1].ClickCustom(driver);
                     courtesy_Checkbox.ClickCustom(driver);
@@ -160,7 +162,6 @@ namespace ObjectRepository.Pages
             }
             next.ClickCustom(driver);
         }
-
-
+        
     }
 }
