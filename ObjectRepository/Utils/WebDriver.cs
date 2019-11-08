@@ -16,7 +16,7 @@ namespace ObjectRepository
             switch (browserType)
             {
                 case "chrome":
-                    ChromeDriverService service = ChromeDriverService.CreateDefaultService();
+                    //ChromeDriverService service = ChromeDriverService.CreateDefaultService();
                     ChromeOptions options = new ChromeOptions();
                     options.AddArguments("--disable-extensions");
                     options.AddArguments("--disable-notifications"); // to disable notification
@@ -31,7 +31,8 @@ namespace ObjectRepository
                     options.AddUserProfilePreference("credentials_enable_service", false);
                     options.AddUserProfilePreference("profile.password_manager_enabled", false);
                     options.AddExcludedArguments(new List<string>() { "enable-automation" });                    
-                    driver = new ChromeDriver(service, options, TimeSpan.FromSeconds(Int16.Parse(Parameter.Get<string>("BrowserLoad"))));
+                    //driver = new ChromeDriver(service, options, TimeSpan.FromSeconds(Int16.Parse(Parameter.Get<string>("BrowserLoad"))));
+                    driver = new ChromeDriver(options);
                     break;
                 default:
                     throw new ArgumentException($"Browser Option {browserType} Is Not Valid - Use Chrome, Edge or IE Instead");

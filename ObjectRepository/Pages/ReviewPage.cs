@@ -57,10 +57,10 @@ namespace ObjectRepository.Pages
             var selection = Parameter.Get<List<string>>("Products");
 
             VerifyProduct(selection);
-            Config.Log("Primary Details Verification");
+            Logger.Log("Primary Details Verification");
             VerifyDetails(primary, primaryDetials);
             VeriyfyEmployement(primary, Parameter.Get<Employee>("PrimaryEmployee"));
-            Config.Log("JointOwner Details Verification");
+            Logger.Log("JointOwner Details Verification");
             VerifyDetails(joint, jointDetails);
             VeriyfyEmployement(joint, Parameter.Get<Employee>("JointEmployee"));
         }
@@ -158,7 +158,7 @@ namespace ObjectRepository.Pages
 
         public void VerifyProduct(List<string> selection)
         {
-            Config.Log("Prodcuts Verification");
+            Logger.Log("Prodcuts Verification");
             var list = FindElements(By.XPath("//div[@class='panel-section' or @name='panel-section']/div[1]/span"));
             foreach(IWebElement e in list)
             {

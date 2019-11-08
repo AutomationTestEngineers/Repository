@@ -197,8 +197,12 @@ namespace Automation
             {
                 driver.Close();
                 driver.Quit();
-                driver.Dispose();
+                //driver.Dispose();
                 driver = null;
+                if (_exception != null)
+                {
+                    SaveScreenShot(TestName);
+                }
                 _exception = null;
             }
         }

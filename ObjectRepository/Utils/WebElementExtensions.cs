@@ -102,6 +102,7 @@ namespace ObjectRepository
         {
             element.HighlightElement(driver);
             SelectElement select = new SelectElement(element);
+            Wait((d => d.FindElements(By.TagName("option")).Count() > 0), driver, 1);
             option = option ?? select.Options[GenericUtils.GetRandomNumber(1, select.Options.Count-1)].Text.ToString().Trim();
             select.SelectByText(option);
             element.ScreenBusy(driver);
@@ -114,8 +115,7 @@ namespace ObjectRepository
             if (value)
             {
                 var a = select.SelectedOption.Text.ToString().Trim();
-                var val = element.FindElements(By.TagName("option")).Where(opt => opt.Text.Contains(a)).FirstOrDefault().GetAttribute("value");
-                return val;
+                return element.FindElements(By.TagName("option")).Where(opt => opt.Text.Contains(a)).FirstOrDefault().GetAttribute("value");                
             }
             return select.SelectedOption.Text.ToString().Trim();
         }

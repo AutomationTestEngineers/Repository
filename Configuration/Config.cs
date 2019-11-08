@@ -18,26 +18,6 @@ namespace Configuration
         //public static string ScreenBusy => ConfigurationManager.AppSettings["ScreenBusy"];
         //public static bool Highlight => bool.Parse(ConfigurationManager.AppSettings["Highlight"]);
 
-        public static void LogInfo(string message)
-        {
-            Console.WriteLine("[Info] : "+message);
-        }
-        public static void LogVerify(string message)
-        {
-            Console.WriteLine("[Verify] : " + message);
-        }
-        public static void LogMessage(string message)
-        {
-            Console.WriteLine("[Message] : " + message);
-        }
-        public static void Log(string message)
-        {
-            string log = ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>";            
-            Console.WriteLine(log);
-            Console.WriteLine(message);
-            Console.WriteLine(log);
-        }
-
     }     
 
     public class Questions
@@ -206,8 +186,7 @@ namespace Configuration
         public virtual void Collect(string parametersFileName, List<string> collectionCriteria)
         {
             string filePath = string.Empty;
-            string directory = Path.Combine(AppDomain.CurrentDomain.BaseDirectory + @"TestData\");
-            filePath = directory + parametersFileName;
+            filePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "TestData", parametersFileName);
             var parameterDeserilizer = new ParameterDeserializer();
             var xmlDoc = new XmlDocument();
             xmlDoc.Load(filePath);

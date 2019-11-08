@@ -105,15 +105,12 @@ namespace ObjectRepository.Pages
             Parameter.Add<ICollection>("BenificiaryDetails_Selected", benificiaryDetails);
 
             if (license)
-            {
-                if (GenericUtils.IsValueOdd)
-                    PrimaryDetailsWithdDrivingLicense(primaryDetials);
-                else
-                    this.PrimaryDetails(primaryDetials);
+                PrimaryDetailsWithdDrivingLicense(primaryDetials);
+            else
+                this.PrimaryDetails(primaryDetials);
 
-                primaryDetials.StateSelected = pri_state_id.GetSelected();
-                Parameter.Add<ICollection>("PrimaryDetails_Selected", primaryDetials);
-            }
+            primaryDetials.StateSelected = pri_state_id.GetSelected();
+            Parameter.Add<ICollection>("PrimaryDetails_Selected", primaryDetials);
 
             if (employment)
             {
@@ -154,8 +151,11 @@ namespace ObjectRepository.Pages
             if (co_2_employer_street_address.Displayed())
                 co_2_employer_street_address.SendKeysWrapper(emp.Address, driver);
             if (co_2_employer_zip.Displayed())
+            {
                 co_2_employer_zip.SendKeysWrapper(emp.Zip, driver);
-            co_2_employer_zip.SendKeys(Keys.Tab);
+                co_2_employer_zip.SendKeys(Keys.Tab);
+            }               
+            
             if (co_2_employer_phone.Displayed())
                 co_2_employer_phone.SendKeysWrapper(Parameter.Get<string>("Cell"), driver, true);
             Sleep(200);
@@ -174,8 +174,10 @@ namespace ObjectRepository.Pages
             if (pri_employer_street_address.Displayed())
                 pri_employer_street_address.SendKeysWrapper(emp.Address, driver);
             if (pri_employer_zip.Displayed())
+            {
                 pri_employer_zip.SendKeysWrapper(emp.Zip, driver);
-            pri_employer_zip.SendKeys(Keys.Tab);
+                pri_employer_zip.SendKeys(Keys.Tab);
+            }                
             if (pri_employer_phone.Displayed())
                 pri_employer_phone.SendKeysWrapper(Parameter.Get<string>("Cell"), driver, true);
             Sleep(200);
@@ -222,7 +224,10 @@ namespace ObjectRepository.Pages
                 pri_contact_method.SelectDropDown(driver, Parameter.Get<string>("ContactMethod"));
 
             if (!string.IsNullOrEmpty(details.SSN))
+            {
                 pri_ssn.SendKeysWrapper(details.SSN, driver, true);
+                pri_ssn.SendKeys(Keys.Tab);
+            }
             if (pri_maiden.Displayed())
                 pri_maiden.SendKeysWrapper(Parameter.Get<string>("MaidenName"), driver, true);
             this.IdentificationType("Driver's License", details);
@@ -232,14 +237,23 @@ namespace ObjectRepository.Pages
         {
             if (addJoinOwner.Displayed())
                 addJoinOwner.ClickCustom(driver);
-            co_2_first_name.SendKeysWrapper(details.FirstName, driver);
-            co_2_last_name.SendKeysWrapper(details.LastName, driver);
-            co_2_date_of_birth.SendKeysWrapper(details.DOB, driver, true);
+            if (co_2_first_name.Displayed())
+                co_2_first_name.SendKeysWrapper(details.FirstName, driver);
+
+            if (co_2_last_name.Displayed())
+                co_2_last_name.SendKeysWrapper(details.LastName, driver);
+            if (co_2_date_of_birth.Displayed())
+                co_2_date_of_birth.SendKeysWrapper(details.DOB, driver, true);
             if (co_2_gender.Displayed())
                 co_2_gender.SelectComboBox(null, driver);
-            co_2_street_address.SendKeysWrapper(details.Address, driver);
-            co_2_zip.SendKeysWrapper(details.Zip, driver);
-            co_2_zip.SendKeys(Keys.Tab);
+
+            if (co_2_street_address.Displayed())
+                co_2_street_address.SendKeysWrapper(details.Address, driver);
+            if (co_2_zip.Displayed())
+            {
+                co_2_zip.SendKeysWrapper(details.Zip, driver);
+                co_2_zip.SendKeys(Keys.Tab);
+            }  
             if (co_2_years_at_address.Displayed())
                 co_2_years_at_address.SendKeysWrapper("5", driver, true);
             if (co_2_months_at_address.Displayed())
@@ -259,13 +273,23 @@ namespace ObjectRepository.Pages
             co_2_email_address.SendKeysWrapper(Parameter.Get<string>("Email"), driver,true);
             if (co_2_contact_method.Displayed())
                 co_2_contact_method.SelectDropDown(driver, Parameter.Get<string>("ContactMethod"));
-            co_2_ssn.SendKeysWrapper(details.SSN, driver, true);
-            co_2_idtype.SelectDropDown(driver, Parameter.Get<string>("IdType"));
-            co_2_state_id.SelectDropDown(driver, details.DLState);
-            co_2_identificaton_number.SendKeysWrapper(details.DLNumber, driver);
-            co_2_idissue_date.SendKeysWrapper(details.IssueDate, driver, true);
-            co_2_id_exp_date.SendKeysWrapper(details.ExpDate, driver, true);
-            if (co_2_maiden.Displayed)
+            if (co_2_ssn.Displayed())
+            {
+                co_2_ssn.SendKeysWrapper(details.SSN, driver, true);
+                co_2_ssn.SendKeys(Keys.Tab);
+            }
+            if (co_2_idtype.Displayed())
+                co_2_idtype.SelectDropDown(driver, Parameter.Get<string>("IdType"));
+            Sleep(500);
+            if (co_2_state_id.Displayed())
+                co_2_state_id.SelectComboBox(details.DLState, driver);
+            if (co_2_identificaton_number.Displayed())
+                co_2_identificaton_number.SendKeysWrapper(details.DLNumber, driver);
+            if (co_2_idissue_date.Displayed())
+                co_2_idissue_date.SendKeysWrapper(details.IssueDate, driver, true);
+            if (co_2_id_exp_date.Displayed())
+                co_2_id_exp_date.SendKeysWrapper(details.ExpDate, driver, true);
+            if (co_2_maiden.Displayed())
                 co_2_maiden.SendKeysWrapper("Maiden Name", driver, true);
         }
 
@@ -288,12 +312,12 @@ namespace ObjectRepository.Pages
             continuePoppup.ClickCustom(driver);
 
             uploadFront.ClickCustom(driver);
-            var licensePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory) + "TestData\\DrivingLicence_1.jpeg";
+            var licensePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory,"TestData","DrivingLicence_1.jpeg");
             Sleep(5000);
             SendKeys.SendWait(licensePath);
             SendKeys.SendWait(@"{ENTER}");
             uploadBack.ClickCustom(driver);
-            licensePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory) + "TestData\\DrivingLicence_2.jpeg";
+            licensePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "TestData", "DrivingLicence_2.jpeg");
             Sleep(2000);
             SendKeys.SendWait(licensePath);
             SendKeys.SendWait(@"{ENTER}");
@@ -318,11 +342,15 @@ namespace ObjectRepository.Pages
             if (pri_rent.Displayed())
                 pri_rent.SelectComboBox(Parameter.Get<string>("Resisency"), driver);
 
-            pri_email_address.SendKeysWrapper(Parameter.Get<string>("Email"), driver);
+            if(pri_email_address.Displayed())
+                pri_email_address.SendKeysWrapper(Parameter.Get<string>("Email"), driver);
             if (pri_contact_method.Displayed())
                 pri_contact_method.SelectDropDown(driver, Parameter.Get<string>("ContactMethod"));
             if (!string.IsNullOrEmpty(details.SSN))
+            {
                 pri_ssn.SendKeysWrapper(details.SSN, driver, true);
+                pri_ssn.SendKeys(Keys.Tab);
+            }
             if (pri_maiden.Displayed())
                 pri_maiden.SendKeysWrapper(Parameter.Get<string>("MaidenName"), driver, true);
         }
