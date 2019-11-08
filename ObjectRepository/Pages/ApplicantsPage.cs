@@ -62,6 +62,18 @@ namespace ObjectRepository.Pages
             co_2_ssn = null, co_2_idtype = null, co_2_state_id = null, co_2_identificaton_number = null, co_2_idissue_date = null,
             co_2_cell_phone = null, co_2_home_phone = null, co_2_id_exp_date = null, co_2_maiden = null, co_2_years_at_address=null, co_2_months_at_address=null, co_2_rent=null;
 
+        [FindsBy(How = How.XPath, Using = "//b[@id='co_2_required-text']/..")]
+        private IWebElement jointOwner_DL = null;
+
+        [FindsBy(How = How.XPath, Using = "//div[@id='co_2_image-capture-modal']//button[@id='upload-front-image']")]
+        private IWebElement uploadFront1 = null;
+
+        [FindsBy(How = How.XPath, Using = "//div[@id='co_2_image-capture-modal']//button[@id='upload-back-image']")]
+        private IWebElement uploadBack1 = null;
+
+        [FindsBy(How = How.XPath, Using = "//div[@id='co_2_image-capture-modal']//button[@id='submit-alert']")]
+        private IWebElement submitLicenseImage1 = null;
+
         /* $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$    Beneficiary   $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$*/
         [FindsBy]
         private IWebElement bene_first_name_0 = null, txt_bene_last_name_0 = null, beneficiaryDob_0 = null, bene_relation_0 = null,
@@ -237,6 +249,28 @@ namespace ObjectRepository.Pages
         {
             if (addJoinOwner.Displayed())
                 addJoinOwner.ClickCustom(driver);
+            // if joint owner required drivers license 
+            Sleep(1000);
+            if (jointOwner_DL.Displayed())
+            {
+                jointOwner_DL.ClickCustom(driver);
+                continuePoppup.ClickCustom(driver);
+                uploadFront1.ClickCustom(driver);
+                var licensePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "TestData", "DrivingLicence_2_1.jpg");
+                Sleep(5000);
+                SendKeys.SendWait(licensePath);
+                SendKeys.SendWait(@"{ENTER}");
+                uploadBack1.ClickCustom(driver);
+                licensePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "TestData", "DrivingLicence_2_2.jpg");
+                Sleep(5000);
+                SendKeys.SendWait(licensePath);
+                SendKeys.SendWait(@"{ENTER}");
+                submitLicenseImage1.ClickCustom(driver);
+                Wait(ExpectedConditions.InvisibilityOfElementLocated(By.Id("co_2_image-capture-modal")), 20);
+                VerifyDriverLicenseUploaded();
+
+            }
+
             if (co_2_first_name.Displayed())
                 co_2_first_name.SendKeysWrapper(details.FirstName, driver);
 
