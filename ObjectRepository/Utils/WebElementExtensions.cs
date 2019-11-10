@@ -44,6 +44,7 @@ namespace ObjectRepository
             }
             catch { return null; }
         }
+       
         public static bool Displayed(this IWebElement element)
         {
             try
@@ -54,7 +55,7 @@ namespace ObjectRepository
             catch { return false; }
         }
 
-        public static void SelectDropDown(this IWebElement element, IWebDriver driver, string option, bool js = false)
+        public static void SelectDropDown(this IWebElement element, string option,string elementName, IWebDriver driver, bool js = false)
         {
             int count = 0;
             try
@@ -67,7 +68,7 @@ namespace ObjectRepository
                     for (int i = 0; i < 25; i++)
                     {
                         count = i;
-                        element.ClickCustom(driver);
+                        element.ClickCustom(elementName,driver);
                         var options = element.FindElements(By.TagName("option"));
                         Wait((d => d.FindElements(By.TagName("option")).Count() > 0), driver, 1);
                         foreach (var a in options)
@@ -98,7 +99,7 @@ namespace ObjectRepository
             }
         }
 
-        public static string SelectComboBox(this IWebElement element, string option, IWebDriver driver)
+        public static string SelectComboBox(this IWebElement element, string option,string elementName, IWebDriver driver)
         {
             element.HighlightElement(driver);
             SelectElement select = new SelectElement(element);
@@ -127,7 +128,7 @@ namespace ObjectRepository
             return options.Select(a=>a.Text).ToList();
         }
 
-        public static void ClickCustom(this IWebElement element, IWebDriver driver, bool js = false,bool clickable = true)
+        public static void ClickCustom(this IWebElement element,string elementName, IWebDriver driver, bool js = false,bool clickable = true)
         {
             try
             {
@@ -150,7 +151,7 @@ namespace ObjectRepository
 
         }
 
-        public static void SendKeysWrapper(this IWebElement element, string text, IWebDriver driver, bool js = false)
+        public static void SendKeysWrapper(this IWebElement element, string text, string elementName,IWebDriver driver, bool js = false)
         {
             try
             {

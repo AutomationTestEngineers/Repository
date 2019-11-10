@@ -1,4 +1,5 @@
-﻿using OpenQA.Selenium;
+﻿using Configuration;
+using OpenQA.Selenium;
 using SeleniumExtras.PageObjects;
 using System;
 using System.Collections.Generic;
@@ -52,13 +53,13 @@ namespace ObjectRepository.Pages
             switch (type.ToUpper())
             {
                 case "PERSONAL":
-                    accountType[0].ClickCustom(driver);
+                    accountType[0].ClickCustom("PERSONAL", driver);
                     break;
                 case "TEEN":
-                    accountType[1].ClickCustom(driver);
+                    accountType[1].ClickCustom("TEEN",driver);
                     break;
                 case "YOUTH":
-                    accountType[2].ClickCustom(driver);
+                    accountType[2].ClickCustom("YOUTH",driver);
                     break;
                 default:
                     throw new ArgumentException($"Please Provide Proper Account Type Instead [{type}]");
@@ -70,29 +71,29 @@ namespace ObjectRepository.Pages
             switch (type.ToLower())
             {
                 case "auto":
-                    autoLoan.ClickCustom(driver);
-                    autoLoanOptions.FirstOrDefault().ClickCustom(driver);
+                    autoLoan.ClickCustom("Auto Loan",driver);
+                    autoLoanOptions.FirstOrDefault().ClickCustom("Loan Option",driver);
                     break;
                 case "pesrsonal":
-                    personalLoan.ClickCustom(driver);
+                    personalLoan.ClickCustom("Personal Loan",driver);
                     break;
                 case "creditcard":
-                    creditcard.ClickCustom(driver);
+                    creditcard.ClickCustom("Credit Card",driver);
                     break;
                 case "othervehicles":
-                    otherVehicles.ClickCustom(driver);
+                    otherVehicles.ClickCustom("Other Vehicles",driver);
                     break;
                 case "secured":
-                    securedLoan.ClickCustom(driver);
+                    securedLoan.ClickCustom("Secured",driver);
                     break;
-                case "homequity":
-                    homeEquityLoan.ClickCustom(driver);
+                case "homeequity":
+                    homeEquityLoan.ClickCustom("Home Equity",driver);
                     break;
                 case "firstmortgage":
-                    firstMortgageLoan.ClickCustom(driver);
+                    firstMortgageLoan.ClickCustom("First Mortgage",driver);
                     break;
                 case "student":
-                    studentLoan.ClickCustom(driver);
+                    studentLoan.ClickCustom("Student",driver);
                     break;
                 default:
                     break;
@@ -101,7 +102,7 @@ namespace ObjectRepository.Pages
     
         public void Member()
         {
-            account_number_input.SendKeysWrapper("", driver);
+            account_number_input.SendKeysWrapper(Parameter.Get<string>("AccoutnNumber"), "AccoutnNumber", driver);
         }
     }
 }

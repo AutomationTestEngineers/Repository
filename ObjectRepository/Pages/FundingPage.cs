@@ -21,10 +21,10 @@ namespace ObjectRepository.Pages
 
         public void EnterCreditCard()
         {
-            Credit.ClickCustom(driver);
-            number.SendKeysWrapper("4111111111111111", driver);
-            expiry.SendKeysWrapper("12/22",driver,true);
-            cvc.SendKeysWrapper("123", driver);            
+            Credit.ClickCustom("Credit Card",driver);
+            number.SendKeysWrapper("4111111111111111","Card Number", driver);
+            expiry.SendKeysWrapper("12/22","Card Expiry",driver,true);
+            cvc.SendKeysWrapper("123","Card CVV", driver);            
         }
 
         public void Payment(String type=null)
@@ -37,16 +37,16 @@ namespace ObjectRepository.Pages
                     EnterCreditCard();
                     break;
                 case "transfer":
-                    True.ClickCustom(driver);
-                    FiRoutingNumber.SendKeysWrapper(Configuration.Parameter.Get<string>("RoutingNumber"), driver);
-                    acctNumber.SendKeysWrapper(Configuration.Parameter.Get<string>("AccountNumber"),driver);
+                    True.ClickCustom("Transfer",driver);
+                    FiRoutingNumber.SendKeysWrapper(Configuration.Parameter.Get<string>("RoutingNumber"), "RoutingNumber", driver);
+                    acctNumber.SendKeysWrapper(Configuration.Parameter.Get<string>("AccountNumber"),"AccountNumber", driver);
                     break;
                 case "internaltransfer":
-                    InternalTransfer.ClickCustom(driver);
-                    acctNumber.SendKeysWrapper(Configuration.Parameter.Get<string>(""), driver);
+                    InternalTransfer.ClickCustom("InternalTransfer", driver);
+                    acctNumber.SendKeysWrapper(Configuration.Parameter.Get<string>("AccountNumber"), "AccountNumber", driver);
                     break;
             }
-            submitApplicationButton.ClickCustom(driver);
+            submitApplicationButton.ClickCustom("Submit",driver);
         }
     }
 }

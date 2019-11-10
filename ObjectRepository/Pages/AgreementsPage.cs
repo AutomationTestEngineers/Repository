@@ -53,10 +53,10 @@ namespace ObjectRepository.Pages
         public void GetStarted()
         {
             VerifyPage();
-            iAgreeChk.ClickCustom(driver,false,false);
+            iAgreeChk.ClickCustom("IAgree",driver,false,false);
             if (membershipChk.Displayed())
-                membershipChk.ClickCustom(driver);
-            getStarted.ClickCustom(driver);
+                membershipChk.ClickCustom("Membership Checkbox", driver);
+            getStarted.ClickCustom("Get Started",driver);
         }
 
         public void VerifyPage()
@@ -69,24 +69,19 @@ namespace ObjectRepository.Pages
             switch (name)
             {
                 case "Terms And Conditions":
-                    termsAndConditions.ClickCustom(driver);
-                    Console.WriteLine("'Terms And Conditions' Link is opened");
+                    termsAndConditions.ClickCustom("Terms And Condition",driver);                    
                     break;
                 case "E-Sign Agreement":
-                    esignAgreemtLink.ClickCustom(driver);
-                    Console.WriteLine("'E-Sign Agreement' Link is opened");
+                    esignAgreemtLink.ClickCustom("E-Sign Agreement", driver);                    
                     break;
                 case "Truth Insaving Certificates":
-                    truthInSavingCertificates.ClickCustom(driver);
-                    Console.WriteLine("'Truth Insaving Certificates' Link is opened");
+                    truthInSavingCertificates.ClickCustom("Truth Insaving Certificates",driver);                    
                     break;
                 case "Truth Insaving Shares":
-                    truthInSavingShares.ClickCustom(driver);
-                    Console.WriteLine("'Truth Insaving Shares' Link is opened");
+                    truthInSavingShares.ClickCustom("Truth Insaving Shares",driver);
                     break;
                 case "Membership Agreement":
-                    msa.ClickCustom(driver);
-                    Console.WriteLine("'Membership Agreement' Link is opened");
+                    msa.ClickCustom("Membership Agreement",driver);
                     break;
             }            
             driver.SwitchToNewWindow();

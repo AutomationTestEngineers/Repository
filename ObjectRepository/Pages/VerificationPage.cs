@@ -36,15 +36,15 @@ namespace ObjectRepository.Pages
                     var index = answers.FindIndex(s => s.Contains(exp_answer));
                     try
                     {
-                        FindBy(By.XPath($"({xpath}[{i}]/div/label/input)[{index + 1}]"), 2, true).ClickCustom(driver);
+                        FindBy(By.XPath($"({xpath}[{i}]/div/label/input)[{index + 1}]"), 2, true).ClickCustom(exp_answer, driver);
                     }
                     catch (Exception e)
                     {
                         index = answers.FindIndex(s => s.Contains("NONEOFTHEABOVE"));
-                        FindBy(By.XPath($"({xpath}[{i}]/div/label/input)[{index + 1}]"), 2, true).ClickCustom(driver);
+                        FindBy(By.XPath($"({xpath}[{i}]/div/label/input)[{index + 1}]"), 2, true).ClickCustom("NONEOFTHEABOVE", driver);
                     }                 
                 }
-                btn_verid_answers_dispatch.ClickCustom(driver);
+                btn_verid_answers_dispatch.ClickCustom("Submit",driver);
             }
         }
     }

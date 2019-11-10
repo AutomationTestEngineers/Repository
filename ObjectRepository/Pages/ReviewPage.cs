@@ -38,15 +38,15 @@ namespace ObjectRepository.Pages
 
         public void CheckAllAndContinue()
         {
-            referral_source.SelectComboBox(null,driver);
-            checkAll.ClickCustom(driver);
-            continueButton.ClickCustom(driver);
+            referral_source.SelectComboBox(null,"Referal Source",driver);
+            checkAll.ClickCustom("Check All",driver);
+            continueButton.ClickCustom("Continue",driver);
 
             Signature();
             if(checkBox.Displayed())
-                checkBox.ClickCustom(driver);
+                checkBox.ClickCustom("Signature Check box",driver);
             if(confirmAndContinueButton.Displayed())
-                confirmAndContinueButton.ClickCustom(driver);
+                confirmAndContinueButton.ClickCustom("Confirm",driver);
         }
 
         public void Review()

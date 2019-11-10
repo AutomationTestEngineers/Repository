@@ -58,32 +58,32 @@ namespace ObjectRepository.Pages
             //CHECKING
             if (Populate)
             {
-                checking.ClickCustom(driver);
-                openNow[GenericUtils.GetRandomNumber(0, openNow.Count-1)].ClickCustom(driver);
+                checking.ClickCustom("Checking",driver);
+                openNow[GenericUtils.GetRandomNumber(0, openNow.Count-1)].ClickCustom("Checking Option", driver);
                 Wait(ExpectedConditions.ElementToBeClickable(moneyMarket));
             }
             Sleep(200);            
             //Monet Market
             if (Populate)
             {                
-                moneyMarket.ClickCustom(driver);
-                dropDowns[0].ClickCustom(driver);
+                moneyMarket.ClickCustom("Monet Market",driver);
+                dropDowns[0].ClickCustom(dropDowns[0].Text,driver);
                 Wait(ExpectedConditions.ElementToBeClickable(certificate));
             }
 
             //CERTIFICATE
             if (Populate)
-                certificate.ClickCustom(driver);
+                certificate.ClickCustom("Certificate", driver);
 
             //Credit Card
             if (Populate)
-                creaditCard.ClickCustom(driver);
+                creaditCard.ClickCustom("CreaditCard", driver);
             Sleep(1000);
             var section = FindElements(By.XPath("//div[@class='product-header']/h3/span | //div[@class='product-header']/h3/sup/..")).Select(a=>a.Text.Trim()).ToList();
             Parameter.Add("Products", section);
-            next.ClickCustom(driver);
+            next.ClickCustom("Next",driver);
             if (disclousure_iAgree.Displayed())
-                disclousure_iAgree.ClickCustom(driver);
+                disclousure_iAgree.ClickCustom("Disclousure iAgree", driver);
         }
 
         public void RandomSelection()
@@ -92,31 +92,31 @@ namespace ObjectRepository.Pages
             //SAVINGS
             if (Populate)
                 if(saving.Displayed())
-                    saving.ClickCustom(driver);
+                    saving.ClickCustom("Saving",driver);
             Sleep(300);
             //CHECKING
             if (Populate)
             {
                 if (checking.Displayed())
-                    checking.ClickCustom(driver);
+                    checking.ClickCustom("Checking", driver);
                 if (FindBy(By.XPath("(//div[@class='dropdown-menu show']/a)[1]"),2).Displayed())
                 {
-                    dropDowns[1].ClickCustom(driver);
-                    courtesy_Checkbox.ClickCustom(driver);
-                    iAgree.ClickCustom(driver);
+                    dropDowns[1].ClickCustom(dropDowns[1].Text, driver);
+                    courtesy_Checkbox.ClickCustom("Courtesy Checkbox", driver);
+                    iAgree.ClickCustom("I Agree",driver);
                 }
             }
             Sleep(200);
             //CERTIFICATE
             if (Populate)
             {
-                certificate.ClickCustom(driver);
+                certificate.ClickCustom("Certificate", driver);
                 int[] numbers = new int[] {3, 6, 12,24,36, 48, 60 };
                 int random = numbers[GenericUtils.GetRandomNumber(0, numbers.Length-1)];
-                dropDowns[GenericUtils.GetRandomNumber(0, numbers.Length - 1)].ClickCustom(driver);
+                dropDowns[GenericUtils.GetRandomNumber(0, numbers.Length - 1)].ClickCustom("Certificate Option",driver);
             }
             Sleep(200);
-            next.ClickCustom(driver);
+            next.ClickCustom("Next",driver);
         }
 
         public void ChooseAccount(string type,int index)
@@ -124,19 +124,19 @@ namespace ObjectRepository.Pages
             switch (type.ToUpper())
             {
                 case "SAVINGS":
-                    saving.ClickCustom(driver);
+                    saving.ClickCustom("SAVINGS",driver);
                     break;
                 case "CHECKING":
-                    checking.ClickCustom(driver);
+                    checking.ClickCustom("CHECKING",driver);
                     break;
                 case "CERTIFICATE":
-                    certificate.ClickCustom(driver);
+                    certificate.ClickCustom("CERTIFICATE",driver);
                     break;
                 default:
                     throw new ArgumentException("Please Give Correct Argument While Selecting Account Type instead["+type+"]");
             }
-            dropDowns[index].ClickCustom(driver);
-            next.ClickCustom(driver);
+            dropDowns[index].ClickCustom(dropDowns[index].Text,driver);
+            next.ClickCustom("Next",driver);
         } 
         
         public void ChooseAccountForDiscovery(string type,string subselection=null)
@@ -144,23 +144,23 @@ namespace ObjectRepository.Pages
             switch (type.ToUpper())
             {                
                 case "CHECKING":
-                    checking.ClickCustom(driver);
-                    FindBy(By.XPath($"//div/h4[contains(text(),'{(new CultureInfo("en-US", false).TextInfo).ToTitleCase(subselection)}')]/../button")).ClickCustom(driver);
+                    checking.ClickCustom("CHECKING",driver);
+                    FindBy(By.XPath($"//div/h4[contains(text(),'{(new CultureInfo("en-US", false).TextInfo).ToTitleCase(subselection)}')]/../button")).ClickCustom("CHECKING",driver);
                     break;
                 case "MONEY MARKET":
-                    moneyMarket.ClickCustom(driver);
-                    dropDowns[0].ClickCustom(driver);
+                    moneyMarket.ClickCustom("MONEY MARKET",driver);
+                    dropDowns[0].ClickCustom("MONEY MARKET",driver);
                     break;
                 case "SHARE CERTIFICATE":
-                    certificate.ClickCustom(driver);
+                    certificate.ClickCustom("SHARE CERTIFICATE",driver);
                     break;
                 case "CREDIT CARD":
-                    creaditCard.ClickCustom(driver);
+                    creaditCard.ClickCustom("CREDIT CARD",driver);
                     break;
                 default:
                     throw new ArgumentException("Please Give Correct Argument While Selecting Account Type instead["+type+"]");
             }
-            next.ClickCustom(driver);
+            next.ClickCustom("Next",driver);
         }
         
     }
