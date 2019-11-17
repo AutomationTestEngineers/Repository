@@ -1,8 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <PARAMETER>
   <SHARED>
-    <Environment>ALPHA</Environment>  <!--Use ALPHA/BETA -->
-    
+    <Environment>ALPHA</Environment>  <!--Use ALPHA/BETA -->    
     <Browser>chrome</Browser>
     <HeadLess>false</HeadLess>
     <ImplicitWait>300</ImplicitWait>

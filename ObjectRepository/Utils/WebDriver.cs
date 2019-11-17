@@ -10,15 +10,15 @@ namespace ObjectRepository
 {
     public class WebDriver
     {
-        public virtual IWebDriver InitDriver(string url)
+        public virtual RemoteWebDriver InitDriver(string url)
         {
-            IWebDriver driver;
+            RemoteWebDriver driver;
             var browserType = Parameter.Get<string>("Browser");
 
             switch (browserType)
             {
                 case "chrome":
-                    //ChromeDriverService service = ChromeDriverService.CreateDefaultService();
+                    //ChromeDriverSer-vice service = ChromeDriverService.CreateDefaultService();
                     ChromeOptions options = new ChromeOptions();
                     options.AddArguments("--disable-extensions");
                     options.AddArguments("--disable-notifications"); // to disable notification

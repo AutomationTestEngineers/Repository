@@ -1,5 +1,9 @@
-﻿using Configuration;
-//using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using AventStack.ExtentReports;
+using AventStack.ExtentReports.Reporter;
+using AventStack.ExtentReports.Reporter.Configuration;
+using Configuration;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using ObjectRepository;
 using ObjectRepository.Pages;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Remote;
@@ -12,13 +16,19 @@ using System.Threading.Tasks;
 
 namespace TestCases.Tests
 {
-   // [TestClass]
+   [TestClass]
     public class Common
     {
         #region fields
         protected RemoteWebDriver driver { get; set; }
         private Exception _exception;
-               
+        protected static ExtentReports extent;
+        protected static ExtentHtmlReporter htmlReporter;
+        protected static ExtentTest test;
+        static string environment;
+        public TestContext TestContext { get; set; }
+
+        WebDriver _webDriver;
         HomePage _homePage;
         AgreementsPage _agreementsPage;
         SelectionPage _selectionPage;
@@ -34,7 +44,15 @@ namespace TestCases.Tests
         #region Properties
         public string TestName { get; set; }
         public XmlParameterCollector XmlParameterCollector { get { return new XmlParameterCollector(); } }
-
+        public WebDriver WebDriver
+        {
+            get
+            {
+                if(_webDriver==null)
+                    _webDriver = new WebDriver();
+                return _webDriver;
+            }
+        }
         public HomePage HomePage
         {
             get
@@ -119,155 +137,207 @@ namespace TestCases.Tests
         #endregion
 
         #region Pre-Requisit
-        
-
-        //[TestCleanup]
-        public void CleanUp()
+        [AssemblyInitialize]
+        public static void StartUp(TestContext test)
         {
+            string directory = Path.Combine(AppDomain.CurrentDomain.BaseDirectory.Replace(@"bin\Debug", ""), "Reports", "report1.html");
+            htmlReporter = new ExtentHtmlReporter(directory);           
+            htmlReporter.Config.Theme = Theme.Dark;
+            htmlReporter.Config.DocumentTitle = "Document";
+            htmlReporter.Config.ReportName = "Automation Test Reuslt Report";
+            
+            htmlReporter.Config.JS = "$('.brand-logo').text('').append('<img src=D:\\Users\\jloyzaga\\Documents\\FrameworkForJoe\\FrameworkForJoe\\Capgemini_logo_high_res-smaller-2.jpg>')";
+            extent = new ExtentReports();
+            extent.AddSystemInfo("Host Name", Environment.MachineName);            
+            extent.AddSystemInfo("User Name", Environment.UserName);
+            extent.AttachReporter(htmlReporter);
+        }
+
+        [AssemblyCleanup]
+        public static void GenerateReport()
+        {
+            extent.AddSystemInfo("Environment", environment);
+            extent.Flush();
+        }
+
+        [TestInitialize]
+        public virtual void Initialize()
+        {
+            TestName = TestContext.TestName;
+            Parameter.Add<string>("TestName", TestName);
+            test = extent.CreateTest($"{TestContext.FullyQualifiedTestClassName.Split('.').LastOrDefault()} => {TestName}");
+        }              
+
+        [TestCleanup]
+        public void CleanUp()
+        {            
+            var status = TestContext.CurrentTestOutcome;
+            Status logstatus;
+            switch (status)
+            {
+                case UnitTestOutcome.Failed:
+                    logstatus = Status.Fail;
+                    string name = SaveScreenShot(TestName);
+                    string screenShotPath = name.Contains("WebDriver may not exist") ? name : $"Evidence : {name}     ";                    
+                    test.Log(logstatus, screenShotPath + test.AddScreenCaptureFromPath(screenShotPath, TestName));
+                    break;
+                case UnitTestOutcome.Inconclusive:
+                    logstatus = Status.Warning;
+                    break;
+                case UnitTestOutcome.Aborted:
+                    logstatus = Status.Skip;
+                    break;
+                default:
+                    logstatus = Status.Pass;
+                    break;
+            }
             if (driver != null)
             {
                 driver.Close();
                 driver.Quit();
-                //driver.Dispose();
-                driver = null;
                 _exception = null;
             }
+            Parameter.Clear();
         }
         #endregion
 
         #region Read Parameters
-
+        string sharedFileName = "Parameter.xml";
         string testParameterFile = "TestCase_Specific.xml";
-        public void CollectSharedParameters()
+
+        public void CollectAllParameters()
         {
-            string sharedFileName = "Parameter.xml";
+            ReadSharedParameters();
+            ReadClientParameters();
+            ReadTestSpecificParameters(TestName);
+        }
+        public void ReadSharedParameters()
+        {            
             Parameter.Add<string>("SharedXML", sharedFileName);
             var collectionCriteria = new List<string>() { "/PARAMETER/SHARED", "/PARAMETER/QUESTIONS" };
             XmlParameterCollector.Collect(sharedFileName, collectionCriteria);
 
-            // Collect Environment Based
-            var environment = Parameter.Get<string>("Environment");
-            var client = Parameter.Get<string>("Client");
-            collectionCriteria = new List<string>() { $"/PARAMETER/CLIENT/{client}/{environment}" };
-            XmlParameterCollector.Collect(sharedFileName, collectionCriteria);
-
-            // Collect Test Case Specific Parameters
-            //this.CollectTestSpecificParameters(TestName);
         }
-        public void CollectTestSpecificParameters(string testName)
+        public void ReadClientParameters(string client=null)
         {
-            var collectionCriteria = new List<string>() { $"/PARAMETER/TESTSPECIFIC/{testName.Replace("(", "").Replace(")", "")}" };
+            // Collect Environment Based
+            client = (client == null) ? Parameter.Get<string>("Client") : client;
+            environment = Parameter.Get<string>("Environment");            
+            var collectionCriteria = new List<string>() { $"/PARAMETER/CLIENT/{client}/{environment}" };
+            XmlParameterCollector.Collect(sharedFileName, collectionCriteria);
+        }
+        public void ReadTestSpecificParameters(string testName)
+        {
+            /// <Summary>
+            /// Based On Test Case Name
+            /// Note : <TestName>  should be present in TestCase_Specific.xml file 
+            testName = (testName == null) ? Parameter.Get<string>("TestName") : testName;
+            var collectionCriteria = new List<string>() { $"/PARAMETER/TESTSPECIFIC/{testName}" };
             XmlParameterCollector.Collect(testParameterFile, collectionCriteria);
         }
         #endregion
 
-        #region methods
-        public void RunStep(Action action, string stepInfo, bool log = true, bool screenShot = true)
+        #region Step methods
+        public void RunStep(Action action, string stepInfo, bool log = true, bool screenShot = false)
         {
             try
             {
                 if (_exception == null)
-                {
-                    if (log)
-                        StepLog(stepInfo, screenShot);
+                {                    
                     action();
+                    if (log)
+                        StepLog(stepInfo, screenShot);
                 }
             }
             catch (Exception e)
             {
-                _exception = e;
-                throw new Exception("Exception : " + e.Message);
+                LogException(stepInfo, e);
             }
 
         }
 
-        public void RunStep<T>(Action<T> action, T parmaeter, string stepInfo, bool log = true, bool screenShot = true)
+        public void RunStep<T>(Action<T> action, T parmaeter, string stepInfo, bool log = true, bool screenShot = false)
         {
             try
             {
                 if (_exception == null)
                 {
-                    if (log)
-                        StepLog(stepInfo, screenShot);
                     action(parmaeter);
+                    if (log)
+                        StepLog(stepInfo, screenShot);                    
                 }
             }
             catch (Exception e)
             {
-                _exception = e;
-                throw new Exception("Exception : " + e.Message);
+                LogException(stepInfo, e);
             }
 
         }
-        public void RunStep<T>(Action<T, T> action, T parmaeter1, T parmaeter2, string stepInfo, bool log = true, bool screenShot = true)
+        public void RunStep<T>(Action<T, T> action, T parmaeter1, T parmaeter2, string stepInfo, bool log = true, bool screenShot = false)
         {
             try
             {
                 if (_exception == null)
                 {
-                    if (log)
-                        StepLog(stepInfo, screenShot);
                     action(parmaeter1, parmaeter2);
+                    if (log)
+                        StepLog(stepInfo, screenShot);                    
                 }
             }
             catch (Exception e)
             {
-                _exception = e;
-                throw new Exception("Exception : " + e.Message);
+                LogException(stepInfo, e);
             }
 
         }
-        public void RunStep<T, T1>(Action<T, T1> action, T parmaeter1, T1 parmaeter2, string stepInfo, bool log = true, bool screenShot = true)
+        public void RunStep<T, T1>(Action<T, T1> action, T parmaeter1, T1 parmaeter2, string stepInfo, bool log = true, bool screenShot = false)
         {
             try
             {
                 if (_exception == null)
                 {
-                    if (log)
-                        StepLog(stepInfo, screenShot);
                     action(parmaeter1, parmaeter2);
+                    if (log)
+                        StepLog(stepInfo, screenShot);                    
                 }
             }
             catch (Exception e)
             {
-                _exception = e;
-                throw new Exception("Exception : " + e.Message);
+                LogException(stepInfo, e);
             }
 
         }
 
-        public void RunStep<T, T1>(Action<T, T1, T1> action, T parmaeter1, T1 parmaeter2, T1 parmaeter3, string stepInfo, bool log = true, bool screenShot = true)
+        public void RunStep<T, T1>(Action<T, T1, T1> action, T parmaeter1, T1 parmaeter2, T1 parmaeter3, string stepInfo, bool log = true, bool screenShot = false)
         {
             try
             {
                 if (_exception == null)
                 {
-                    if (log)
-                        StepLog(stepInfo, screenShot);
                     action(parmaeter1, parmaeter2, parmaeter3);
+                    if (log)
+                        StepLog(stepInfo, screenShot);                    
                 }
             }
             catch (Exception e)
             {
-                _exception = e;
-                throw new Exception("Exception : " + e.Message);
+                LogException(stepInfo, e);
             }
         }
-        public void RunStep<T, T1, T2>(Action<T, T1, T1, T2> action, T parmaeter1, T1 parmaeter2, T1 parmaeter3, T2 parmaeter4, string stepInfo, bool log = true, bool screenShot = true)
+        public void RunStep<T, T1, T2>(Action<T, T1, T1, T2> action, T parmaeter1, T1 parmaeter2, T1 parmaeter3, T2 parmaeter4, string stepInfo, bool log = true, bool screenShot = false)
         {
             try
             {
                 if (_exception == null)
                 {
-                    if (log)
-                        StepLog(stepInfo, screenShot);
                     action(parmaeter1, parmaeter2, parmaeter3, parmaeter4);
+                    if (log)
+                        StepLog(stepInfo, screenShot);                    
                 }
             }
             catch (Exception e)
             {
-                _exception = e;
-                throw new Exception("Exception : " + e.Message);
+                LogException(stepInfo,e);
             }
 
         }
@@ -276,37 +346,46 @@ namespace TestCases.Tests
         {
             if (screenShot)
             {
-                //test.Log(Status.Pass, $"(Step : {stepInfo}) " + test.AddScreenCaptureFromPath(SaveScreenShot(stepInfo)));
-                Console.WriteLine("Step : " + stepInfo);
-                //test.Log(Status.Pass, "Step : " + stepInfo);
+                test.Log(Status.Pass, $"(Step : {stepInfo}) " + test.AddScreenCaptureFromPath(SaveScreenShot(stepInfo)));
+                test.Log(Status.Pass, "Step : " + stepInfo);
             }
             else
             {
-                //test.Log(Status.Pass, "Step : " + stepInfo);
-                Console.WriteLine("Step : " + stepInfo);
+                //test.CreateNode("Step : "+stepInfo);
+                test.Log(Status.Pass, "Step : " + stepInfo);
             }
+                
+        }
 
+        private void LogException(string stepInfo,Exception e)
+        {
+            test.Log(Status.Fail, $"Step : {stepInfo}, [Exception] : {e.Message}");
+            _exception = e;
+            throw new Exception("Exception : " + e.Message);
         }
         #endregion
 
-        private string SaveScreenShot(string screenshotFirstName)
+        private string SaveScreenShot(string screenshotFirstName,string filePrefix= "TestFailure")
         {
-            var folderLocation = Path.Combine("C:\\evidence\\screenshots", "testresults" + DateTime.Now.ToString("yyyyMMdd"));
-            if (!Directory.Exists(folderLocation))
+            try
             {
-                Directory.CreateDirectory(folderLocation);
+                var folderLocation = Path.Combine("C:\\evidence\\screenshots", filePrefix+"_On_" + DateTime.Now.ToString("yyyy_MM_dd")+"\\");
+                if (!Directory.Exists(folderLocation))
+                    Directory.CreateDirectory(folderLocation);
+                var screenshot = ((ITakesScreenshot)driver).GetScreenshot();
+                var filename = new StringBuilder(folderLocation);
+                filename.Append(screenshotFirstName);
+                filename.Append(DateTime.Now.ToString("dd-mm-yyyy HH_mm_ss"));
+                filename.Append(".png");
+
+                filename = filename.Replace('|', ' ').Replace('}', ' ');
+                screenshot.SaveAsFile(filename.ToString(), ScreenshotImageFormat.Png);
+                return filename.ToString();
             }
-            var screenshot = ((ITakesScreenshot)driver).GetScreenshot();
-            //var filename =(custom == null) ? new StringBuilder(folderLocation) :new StringBuilder();
-            var filename = new StringBuilder(folderLocation);
-            filename.Append(screenshotFirstName);
-            filename.Append(DateTime.Now.ToString("dd-mm-yyyy HH_mm_ss"));
-            filename.Append(".png");
-
-            filename = filename.Replace('|', ' ').Replace('}', ' ');
-            screenshot.SaveAsFile(filename.ToString(), ScreenshotImageFormat.Png);
-
-            return filename.ToString();
+            catch(Exception e)
+            {
+                return "ScreenShot not to capture WebDriver may not exist, Exception : "+e.Message;
+            }
         }
     }
 }
