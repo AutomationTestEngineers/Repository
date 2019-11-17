@@ -1,7 +1,8 @@
 ﻿using Configuration;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+//using Microsoft.VisualStudio.TestTools.UnitTesting;
 using ObjectRepository.Pages;
 using OpenQA.Selenium;
+using OpenQA.Selenium.Remote;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -11,11 +12,11 @@ using System.Threading.Tasks;
 
 namespace TestCases.Tests
 {
-    [TestClass]
+   // [TestClass]
     public class Common
     {
         #region fields
-        protected IWebDriver driver { get; set; }
+        protected RemoteWebDriver driver { get; set; }
         private Exception _exception;
                
         HomePage _homePage;
@@ -120,7 +121,7 @@ namespace TestCases.Tests
         #region Pre-Requisit
         
 
-        [TestCleanup]
+        //[TestCleanup]
         public void CleanUp()
         {
             if (driver != null)

@@ -1,8 +1,10 @@
 ﻿using Configuration;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
+using OpenQA.Selenium.Remote;
 using System;
 using System.Collections.Generic;
+using Xunit.Abstractions;
 
 namespace ObjectRepository
 {
@@ -41,6 +43,30 @@ namespace ObjectRepository
             driver.Navigate().GoToUrl(url);
             driver.Manage().Timeouts().PageLoad = TimeSpan.FromSeconds(Int16.Parse(Parameter.Get<string>("PageLoad")));
             driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromMilliseconds(Int16.Parse(Parameter.Get<string>("ImplicitWait")));
+            return driver;
+        }
+    
+        public RemoteWebDriver OpenBrowser(ITestOutputHelper _output)
+        {
+            ChromeOptions options = new ChromeOptions();
+            options.AddArguments("--disable-extensions");
+            options.AddArguments("--disable-notifications"); // to disable notification
+            options.AddArguments("--disable-application-cache"); // to disable cache
+            options.AddArguments("test-type");
+            options.AddArguments("no-sandbox");
+            options.AddArguments("--disable-plugins");
+            options.AddArguments("--enable-precise-memory-info");
+            options.AddArguments("--disable-popup-blocking");
+            options.AddArguments("test-type=browser");
+            options.AddAdditionalCapability("useAutomationExtension", false);
+            options.AddUserProfilePreference("credentials_enable_service", false);
+            options.AddUserProfilePreference("profile.password_manager_enabled", false);
+            options.AddExcludedArguments(new List<string>() { "enable-automation" });
+            //driver = new ChromeDriver(service, options, TimeSpan.FromSeconds(Int16.Parse(Parameter.Get<string>("BrowserLoad"))));
+            RemoteWebDriver driver = new ChromeDriver(options);
+            driver.Navigate().GoToUrl(Parameter.Get<string>("Url"));
+            driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(5);
+            driver.Manage().Timeouts().PageLoad = TimeSpan.FromSeconds(60);
             return driver;
         }
     }
