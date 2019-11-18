@@ -27,7 +27,7 @@ namespace ObjectRepository.Pages
                 String question = string.Empty;
                 String answer = string.Empty;
                 ScreenBusy();
-                try { driver.FindElement(By.XPath(xpath)); } catch { break; }
+                try { driver.FindElement(By.XPath(xpath)); } catch { Logger.Log("Question does not exist"); break; }
                 var size = driver.FindElements(By.XPath(xpath)).Count();
                 for (int i = 1; i <= size; i++)
                 {

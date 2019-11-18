@@ -24,12 +24,40 @@ namespace ObjectRepository
                 windows.Remove(baseWindow);
             driver.SwitchTo().Window(windows.FirstOrDefault());
         }
+        public static void SwitchToPopup(this IWebDriver driver,IWebElement element,string popupName)
+        {
+            PopupWindowFinder find = new PopupWindowFinder(driver);
+            string sesstion = find.Click(element);
+            driver.SwitchTo().Window(sesstion);
+            Logger.Log($"{popupName} Opened Successfully");
+        }
 
         public static void SwitchWindowUsingWindowCount(this IWebDriver driver,int number) {
             string[] windows = driver.WindowHandles.ToArray();
             driver.SwitchTo().Window(windows[windows.Count()-1]);
         }
-        
+        public static string SaveScreenShot(this IWebDriver driver, string screenshotFirstName, string filePrefix = "TestFailure")
+        {
+            try
+            {
+                var folderLocation = Path.Combine("C:\\evidence\\screenshots", filePrefix + "_On_" + DateTime.Now.ToString("yyyy_MM_dd") + "\\");
+                if (!Directory.Exists(folderLocation))
+                    Directory.CreateDirectory(folderLocation);
+                var screenshot = ((ITakesScreenshot)driver).GetScreenshot();
+                var filename = new StringBuilder(folderLocation);
+                filename.Append(screenshotFirstName);
+                filename.Append(DateTime.Now.ToString("dd-mm-yyyy HH_mm_ss"));
+                filename.Append(".png");
+
+                filename = filename.Replace('|', ' ').Replace('}', ' ');
+                screenshot.SaveAsFile(filename.ToString(), ScreenshotImageFormat.Png);
+                return filename.ToString();
+            }
+            catch (Exception e)
+            {
+                return "ScreenShot not to capture WebDriver may not exist, Exception : " + e.Message;
+            }
+        }
 
         private static IWebElement FindBy(IWebDriver driver, By by, int timeout)
         {
@@ -45,41 +73,41 @@ namespace ObjectRepository
             wait.Until(condition);
         }
 
-        public static void TakeScreenshot(this IWebDriver driver, string fileNameBase)
-        {
-            try
-            {
-                var artifactDirectory = Path.Combine("C:\\evidence\\screenshots", "testresults" + DateTime.Now.ToString("yyyyMMdd"));
-                if (!Directory.Exists(artifactDirectory)) Directory.CreateDirectory(artifactDirectory);
-                ITakesScreenshot takesScreenshot = driver as ITakesScreenshot;
-                if (takesScreenshot != null)
-                {
-                    var screenshot = takesScreenshot.GetScreenshot();
-                    string screenshotFilePath = Path.Combine(artifactDirectory, fileNameBase + ".jpg");
-                    Logger.Log($"[Screen Shot Path] {screenshotFilePath}");
-                    var screenshotBase64 = screenshot.AsBase64EncodedString;
-                    SaveByteArrayAsImage(screenshotFilePath, screenshotBase64);
-                }
-            }
-            catch (Exception ex)
-            {
-                Console.Error.WriteLine("[ERROR]: Error while taking screenshot: {0}", ex);
-            }
-        }
+        //public static void TakeScreenshot(this IWebDriver driver, string fileNameBase)
+        //{
+        //    try
+        //    {
+        //        var artifactDirectory = Path.Combine("C:\\evidence\\screenshots", "testresults" + DateTime.Now.ToString("yyyyMMdd"));
+        //        if (!Directory.Exists(artifactDirectory)) Directory.CreateDirectory(artifactDirectory);
+        //        ITakesScreenshot takesScreenshot = driver as ITakesScreenshot;
+        //        if (takesScreenshot != null)
+        //        {
+        //            var screenshot = takesScreenshot.GetScreenshot();
+        //            string screenshotFilePath = Path.Combine(artifactDirectory, fileNameBase + ".jpg");
+        //            Logger.Log($"[Screen Shot Path] {screenshotFilePath}");
+        //            var screenshotBase64 = screenshot.AsBase64EncodedString;
+        //            SaveByteArrayAsImage(screenshotFilePath, screenshotBase64);
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        Console.Error.WriteLine("[ERROR]: Error while taking screenshot: {0}", ex);
+        //    }
+        //}
 
-        private static void SaveByteArrayAsImage(string screenshotFilePath, string base64String)
-        {
-            byte[] bytes = Convert.FromBase64String(base64String);
-            Image image;
-            using (MemoryStream ms = new MemoryStream(bytes))
-            { image = Image.FromStream(ms); }
-            image.Save(screenshotFilePath, ImageFormat.Jpeg);
-        }
+        //private static void SaveByteArrayAsImage(string screenshotFilePath, string base64String)
+        //{
+        //    byte[] bytes = Convert.FromBase64String(base64String);
+        //    Image image;
+        //    using (MemoryStream ms = new MemoryStream(bytes))
+        //    { image = Image.FromStream(ms); }
+        //    image.Save(screenshotFilePath, ImageFormat.Jpeg);
+        //}        
 
-        public static void GetScreenShot(this IWebDriver driver, string testName)
-        {
-            driver.TakeScreenshot($"Error_{testName}_{DateTime.Now.ToString("yyyyMMdd_HHmmss")}");
-        }
+        //public static void GetScreenShot(this IWebDriver driver, string testName)
+        //{
+        //    driver.TakeScreenshot($"Error_{testName}_{DateTime.Now.ToString("yyyyMMdd_HHmmss")}");
+        //}
 
         public static void ScrollPage(this IWebDriver driver, int x, int y)
         {

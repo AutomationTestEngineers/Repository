@@ -9,6 +9,7 @@ using OpenQA.Selenium;
 using OpenQA.Selenium.Remote;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -26,6 +27,7 @@ namespace TestCases.Tests
         protected static ExtentHtmlReporter htmlReporter;
         protected static ExtentTest test;
         static string environment;
+        static string folderLocation;
         public TestContext TestContext { get; set; }
 
         WebDriver _webDriver;
@@ -140,12 +142,17 @@ namespace TestCases.Tests
         [AssemblyInitialize]
         public static void StartUp(TestContext test)
         {
-            string directory = Path.Combine(AppDomain.CurrentDomain.BaseDirectory.Replace(@"bin\Debug", ""), "Reports", "report1.html");
+            // Log Report Creation
+            folderLocation = Path.Combine(new FileInfo(AppDomain.CurrentDomain.BaseDirectory).Directory.Parent.FullName, "Reports", "Log_" + DateTime.Now.ToString("MM_dd_yyyy"));
+            if (!Directory.Exists(folderLocation))
+                Directory.CreateDirectory(folderLocation);
+
+            string directory = Path.Combine(folderLocation, "report.html");
             htmlReporter = new ExtentHtmlReporter(directory);           
             htmlReporter.Config.Theme = Theme.Standard;
             htmlReporter.Config.DocumentTitle = "Automation Test Reuslt Report";
             htmlReporter.Config.ReportName = "Automation Test Reuslt Report";
-            
+
             htmlReporter.Config.JS = "$('.brand-logo').text('').append('<img src=D:\\Users\\jloyzaga\\Documents\\FrameworkForJoe\\FrameworkForJoe\\Capgemini_logo_high_res-smaller-2.jpg>')";
             extent = new ExtentReports();
             extent.AddSystemInfo("Host Name", Environment.MachineName);            
@@ -158,21 +165,17 @@ namespace TestCases.Tests
         {
             extent.AddSystemInfo("Environment", environment);
             extent.Flush();
+            using (Process myProcess = Process.Start("Chrome.exe", Path.Combine(folderLocation, "index.html"))){}
         }
 
         [TestInitialize]
         public virtual void Initialize()
         {
             TestName = TestContext.TestName;
-            Parameter.Add<string>("TestName", TestName);
-
-            // Log Report Creation
-            var folderLocation = Path.Combine(new FileInfo(AppDomain.CurrentDomain.BaseDirectory).Directory.Parent.FullName, "Reports", "Log_" + DateTime.Now.ToString("MM_dd_yyyy"));
-            if (!Directory.Exists(folderLocation))
-                Directory.CreateDirectory(folderLocation);
+            Parameter.Add<string>("TestName", TestName);            
             Logger.CreateTestLogFile(Path.Combine(folderLocation, TestName + ".txt"));
             Logger.BeginTestIteration(TestName);
-            test = extent.CreateTest($"{TestName} <a href='{Path.Combine(folderLocation, TestName + ".txt")}' target='_blank'> click here for log</a>");            
+            test = extent.CreateTest($"{TestName} <a href='{Path.Combine(folderLocation, TestName + ".txt")}' target='_blank'> \t click here for log</a>");            
         }              
 
         [TestCleanup]
@@ -188,7 +191,7 @@ namespace TestCases.Tests
                     if(name.Contains("WebDriver may not exist"))
                         test.Log(logstatus, name);
                     else
-                        test.Log(logstatus, $"<a href='{name}' target='_blank'> click here for screen shot</a>" + "   " + test.AddScreenCaptureFromPath(name, TestName));
+                        test.Log(Status.Info, $"<a href='{name}' target='_blank'> click here for screen shot</a>" + "   "/* + test.AddScreenCaptureFromPath(name, TestName)*/);
                     break;
                 case UnitTestOutcome.Inconclusive:
                     logstatus = Status.Warning;

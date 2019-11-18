@@ -147,8 +147,7 @@ namespace ObjectRepository
             }
             catch (Exception e)
             {
-                Logger.Log($"[Root Cause] : While Performing Click On [{element.GetLocator()}]");
-                Logger.Log(e.StackTrace);
+                Logger.Log($"[Root Cause] : While Performing Click On [{element.GetLocator()}]");                
                 throw new Exception(e.Message);
             }
 

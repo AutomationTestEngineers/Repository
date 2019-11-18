@@ -95,7 +95,7 @@ namespace ObjectRepository.Pages
         public void Verify(bool condition,string name,string actual,string expected)
         {
             condition.Should().BeTrue($"[{name}] => Actual [{actual}]  Expected[{expected}]");
-            Logger.Log($"{name} : Actual [{actual}]  Expected [{expected}]");
+            Logger.Log($"[Verify] : {name} : Actual [{actual}]  Expected [{expected}]");
         }
     }
 }

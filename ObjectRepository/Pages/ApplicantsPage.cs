@@ -313,7 +313,7 @@ namespace ObjectRepository.Pages
                 co_2_ssn.SendKeys(Keys.Tab);
             }
             if (co_2_idtype.Displayed())
-                co_2_idtype.SelectComboBox(Parameter.Get<string>("IdType"), "Joint Owner IdTy[e", driver);
+                co_2_idtype.SelectComboBox(Parameter.Get<string>("IdType"), "Joint Owner IdType", driver);
             Sleep(500);
             if (co_2_state_id.Displayed())
                 co_2_state_id.SelectComboBox(details.DLState, "Joint Owner DL State", driver);

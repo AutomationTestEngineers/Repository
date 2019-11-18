@@ -1,4 +1,5 @@
-﻿using OpenQA.Selenium;
+﻿using Configuration;
+using OpenQA.Selenium;
 using SeleniumExtras.PageObjects;
 using System;
 using System.Collections.Generic;
@@ -36,7 +37,7 @@ namespace ObjectRepository.Pages
                     client.ClickCustom("CLIENT", driver);
                     break;
             }
-            Console.Write(type + " : Page is opened");
+            Logger.Log($"{type} : Page is opened");
         }
     }
 }

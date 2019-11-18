@@ -1,11 +1,7 @@
 ﻿using Configuration;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using ObjectRepository;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+
 
 namespace TestCases.Tests
 {
@@ -25,7 +21,7 @@ namespace TestCases.Tests
         #region TestCases
 
         [TestMethod]
-        public void ApplyMemberShip_For_Enrichment_Personal()
+        public void TC_003_ApplyMemberShip_For_Enrichment_Personal()
         {
             RunStep(HomePage.GoToPage, "membership", "Goto MemeberShip Page");
             RunStep(() =>
@@ -46,7 +42,7 @@ namespace TestCases.Tests
         }
 
         [TestMethod]
-        public void ApplyMemberShip_For_Enrichment_Teen()
+        public void TC_004_ApplyMemberShip_For_Enrichment_Teen()
         {
             RunStep(HomePage.GoToPage, "membership", "Goto MemeberShip Page", true, false);
             RunStep(() =>
@@ -67,7 +63,7 @@ namespace TestCases.Tests
         }
 
         [TestMethod]
-        public void ApplyMemberShip_For_Enrichment_Youth()
+        public void TC_005_ApplyMemberShip_For_Enrichment_Youth()
         {
             RunStep(HomePage.GoToPage, "membership", "Goto MemeberShip Page");
             RunStep(() =>

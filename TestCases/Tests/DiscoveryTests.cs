@@ -21,7 +21,7 @@ namespace TestCases.Tests
 
         #region TestCases
         [TestMethod]
-        public void ApplyMemberShip_For_Discovery()
+        public void TC_001_ApplyMemberShip_For_Discovery()
         {
             RunStep(HomePage.GoToPage, "membership", "Goto MemeberShip Page");
             RunStep(() =>
@@ -43,7 +43,7 @@ namespace TestCases.Tests
 
 
         [TestMethod]
-        public void Auto_Loan()
+        public void TC_002_Auto_Loan()
         {
             RunStep(HomePage.GoToPage, "loans", "Goto MemeberShip Page");
             RunStep(SelectionPage.SelectLoanType, "TEEN", "Select Personal Account Type");
