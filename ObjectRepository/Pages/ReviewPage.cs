@@ -32,21 +32,21 @@ namespace ObjectRepository.Pages
         private IWebElement checkBox = null;
 
 
-        
+
         string primary = "//h3[contains(text(),'Primary')]/..";
         string joint = "//h3[text()='Joint Owner']/..";
 
         public void CheckAllAndContinue()
         {
-            referral_source.SelectComboBox(null,driver);
-            checkAll.ClickCustom(driver);
-            continueButton.ClickCustom(driver);
+            referral_source.SelectComboBox(null, "Referal Source", driver);
+            checkAll.ClickCustom("Check All", driver);
+            continueButton.ClickCustom("Continue", driver);
 
             Signature();
-            if(checkBox.Displayed())
-                checkBox.ClickCustom(driver);
-            if(confirmAndContinueButton.Displayed())
-                confirmAndContinueButton.ClickCustom(driver);
+            if (checkBox.Displayed())
+                checkBox.ClickCustom("Signature Check box", driver);
+            if (confirmAndContinueButton.Displayed())
+                confirmAndContinueButton.ClickCustom("Confirm", driver);
         }
 
         public void Review()
@@ -64,33 +64,33 @@ namespace ObjectRepository.Pages
             VerifyDetails(joint, jointDetails);
             VeriyfyEmployement(joint, Parameter.Get<Employee>("JointEmployee"));
         }
-        
+
         public void Signature()
         {
             try
             {
                 Sleep(200);
                 var elements = driver.FindElements(By.TagName("canvas"));
-                foreach(IWebElement e in elements)
+                foreach (IWebElement e in elements)
                     actions.MoveToElement(e).ClickAndHold().MoveByOffset(165, 15).MoveByOffset(185, 15)
                         .Release().Build().Perform();
             }
             catch { }
-        }        
+        }
 
-        public void VerifyDetails(string xpath,ICollection details)
-        {           
-            var section = FindBy(By.XPath(xpath),1,true);
-            if (section!=null)
+        public void VerifyDetails(string xpath, ICollection details)
+        {
+            var section = FindBy(By.XPath(xpath), 1, true);
+            if (section != null)
             {
                 section.HighlightElement(driver);
                 var fullName = section.find(By.Id("fullName"));
-                if (fullName != null && details.FirstName!=null)
+                if (fullName != null && details.FirstName != null)
                     Verify(fullName.Text.Contains(details.FirstName), "Name", fullName.Text, details.FirstName);
 
                 var dateOfBirth = section.find(By.Id("dateOfBirth"));
                 var expectedDOB = DateTime.Parse(dateOfBirth.Text).ToString("M/d/yyyy", CultureInfo.InvariantCulture);
-                if (dateOfBirth!=null)
+                if (dateOfBirth != null)
                     Verify(dateOfBirth.Text.Contains(expectedDOB), "Date Of Birth", dateOfBirth.Text, details.DOB);
 
                 var gender = section.find(By.Id("gender"));
@@ -130,11 +130,11 @@ namespace ObjectRepository.Pages
                     Verify(details.SSN.Contains(ssn.Text.Split('-').LastOrDefault()), "SSN", ssn.Text, details.SSN);
 
                 var maidenName = section.find(By.Id("mothersMaidenName"));
-                if (maidenName != null && details.MaidenName!=null)
-                    Verify(maidenName.Text.Contains(details.MaidenName), "Maiden Name", maidenName.Text, details.MaidenName);                
+                if (maidenName != null && details.MaidenName != null)
+                    Verify(maidenName.Text.Contains(details.MaidenName), "Maiden Name", maidenName.Text, details.MaidenName);
             }
-        } 
-        
+        }
+
         public void VeriyfyEmployement(string xpath, Employee emp)
         {
             var section = FindBy(By.XPath(xpath), 1, true);
@@ -145,22 +145,22 @@ namespace ObjectRepository.Pages
                 if (currentEmployment != null && emp.Employer != null)
                     Verify(currentEmployment.Text.Contains(emp.Employer), "Employment", currentEmployment.Text, emp.Employer);
 
-                var address = FindBy(By.XPath($"{xpath}//h3[text()='Employment Information']/../div[2]"),1);
+                var address = FindBy(By.XPath($"{xpath}//h3[text()='Employment Information']/../div[2]"), 1);
                 if (address != null && emp.Address != null)
                     Verify(address.Text.Contains(emp.Address), "Employee Address", address.Text, emp.Address);
 
                 var empPhone = section.find(By.Id("idIssuingCountry"));
                 if (empPhone != null && emp.Phone != null)
                     Verify(empPhone.Text.Contains(emp.Phone), "Employee Phone", empPhone.Text, emp.Phone);
-            } 
-            
+            }
+
         }
 
         public void VerifyProduct(List<string> selection)
         {
             Logger.Log("Prodcuts Verification");
             var list = FindElements(By.XPath("//div[@class='panel-section' or @name='panel-section']/div[1]/span"));
-            foreach(IWebElement e in list)
+            foreach (IWebElement e in list)
             {
                 e.HighlightElement(driver);
                 var product = selection.Where(a => a.Contains(e.Text.Trim())).FirstOrDefault();

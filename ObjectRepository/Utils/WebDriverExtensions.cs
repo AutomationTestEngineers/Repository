@@ -1,4 +1,5 @@
-﻿using OpenQA.Selenium;
+﻿using Configuration;
+using OpenQA.Selenium;
 using OpenQA.Selenium.Support.UI;
 using SeleniumExtras.WaitHelpers;
 using System;
@@ -55,7 +56,7 @@ namespace ObjectRepository
                 {
                     var screenshot = takesScreenshot.GetScreenshot();
                     string screenshotFilePath = Path.Combine(artifactDirectory, fileNameBase + ".jpg");
-                    Console.WriteLine($"[Screen Shot Path] {screenshotFilePath}");
+                    Logger.Log($"[Screen Shot Path] {screenshotFilePath}");
                     var screenshotBase64 = screenshot.AsBase64EncodedString;
                     SaveByteArrayAsImage(screenshotFilePath, screenshotBase64);
                 }

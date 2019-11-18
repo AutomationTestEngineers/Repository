@@ -142,8 +142,8 @@ namespace TestCases.Tests
         {
             string directory = Path.Combine(AppDomain.CurrentDomain.BaseDirectory.Replace(@"bin\Debug", ""), "Reports", "report1.html");
             htmlReporter = new ExtentHtmlReporter(directory);           
-            htmlReporter.Config.Theme = Theme.Dark;
-            htmlReporter.Config.DocumentTitle = "Document";
+            htmlReporter.Config.Theme = Theme.Standard;
+            htmlReporter.Config.DocumentTitle = "Automation Test Reuslt Report";
             htmlReporter.Config.ReportName = "Automation Test Reuslt Report";
             
             htmlReporter.Config.JS = "$('.brand-logo').text('').append('<img src=D:\\Users\\jloyzaga\\Documents\\FrameworkForJoe\\FrameworkForJoe\\Capgemini_logo_high_res-smaller-2.jpg>')";
@@ -165,7 +165,14 @@ namespace TestCases.Tests
         {
             TestName = TestContext.TestName;
             Parameter.Add<string>("TestName", TestName);
-            test = extent.CreateTest($"{TestContext.FullyQualifiedTestClassName.Split('.').LastOrDefault()} => {TestName}");
+
+            // Log Report Creation
+            var folderLocation = Path.Combine(new FileInfo(AppDomain.CurrentDomain.BaseDirectory).Directory.Parent.FullName, "Reports", "Log_" + DateTime.Now.ToString("MM_dd_yyyy"));
+            if (!Directory.Exists(folderLocation))
+                Directory.CreateDirectory(folderLocation);
+            Logger.CreateTestLogFile(Path.Combine(folderLocation, TestName + ".txt"));
+            Logger.BeginTestIteration(TestName);
+            test = extent.CreateTest($"{TestName} <a href='{Path.Combine(folderLocation, TestName + ".txt")}' target='_blank'> click here for log</a>");            
         }              
 
         [TestCleanup]
@@ -177,15 +184,19 @@ namespace TestCases.Tests
             {
                 case UnitTestOutcome.Failed:
                     logstatus = Status.Fail;
-                    string name = SaveScreenShot(TestName);
-                    string screenShotPath = name.Contains("WebDriver may not exist") ? name : $"Evidence : {name}     ";                    
-                    test.Log(logstatus, screenShotPath + test.AddScreenCaptureFromPath(screenShotPath, TestName));
+                    string name = SaveScreenShot(TestName);    
+                    if(name.Contains("WebDriver may not exist"))
+                        test.Log(logstatus, name);
+                    else
+                        test.Log(logstatus, $"<a href='{name}' target='_blank'> click here for screen shot</a>" + "   " + test.AddScreenCaptureFromPath(name, TestName));
                     break;
                 case UnitTestOutcome.Inconclusive:
                     logstatus = Status.Warning;
+                    test.Log(logstatus);
                     break;
                 case UnitTestOutcome.Aborted:
                     logstatus = Status.Skip;
+                    test.Log(logstatus);
                     break;
                 default:
                     logstatus = Status.Pass;
@@ -197,6 +208,7 @@ namespace TestCases.Tests
                 driver.Quit();
                 _exception = null;
             }
+            Logger.EndTestIteration(logstatus);
             Parameter.Clear();
         }
         #endregion
@@ -243,7 +255,8 @@ namespace TestCases.Tests
             try
             {
                 if (_exception == null)
-                {                    
+                {
+                    Logger.StepLog(stepInfo);
                     action();
                     if (log)
                         StepLog(stepInfo, screenShot);
@@ -262,6 +275,7 @@ namespace TestCases.Tests
             {
                 if (_exception == null)
                 {
+                    Logger.StepLog(stepInfo);
                     action(parmaeter);
                     if (log)
                         StepLog(stepInfo, screenShot);                    
@@ -272,64 +286,15 @@ namespace TestCases.Tests
                 LogException(stepInfo, e);
             }
 
-        }
-        public void RunStep<T>(Action<T, T> action, T parmaeter1, T parmaeter2, string stepInfo, bool log = true, bool screenShot = false)
-        {
-            try
-            {
-                if (_exception == null)
-                {
-                    action(parmaeter1, parmaeter2);
-                    if (log)
-                        StepLog(stepInfo, screenShot);                    
-                }
-            }
-            catch (Exception e)
-            {
-                LogException(stepInfo, e);
-            }
-
-        }
-        public void RunStep<T, T1>(Action<T, T1> action, T parmaeter1, T1 parmaeter2, string stepInfo, bool log = true, bool screenShot = false)
-        {
-            try
-            {
-                if (_exception == null)
-                {
-                    action(parmaeter1, parmaeter2);
-                    if (log)
-                        StepLog(stepInfo, screenShot);                    
-                }
-            }
-            catch (Exception e)
-            {
-                LogException(stepInfo, e);
-            }
-
-        }
-
-        public void RunStep<T, T1>(Action<T, T1, T1> action, T parmaeter1, T1 parmaeter2, T1 parmaeter3, string stepInfo, bool log = true, bool screenShot = false)
-        {
-            try
-            {
-                if (_exception == null)
-                {
-                    action(parmaeter1, parmaeter2, parmaeter3);
-                    if (log)
-                        StepLog(stepInfo, screenShot);                    
-                }
-            }
-            catch (Exception e)
-            {
-                LogException(stepInfo, e);
-            }
-        }
+        }       
+       
         public void RunStep<T, T1, T2>(Action<T, T1, T1, T2> action, T parmaeter1, T1 parmaeter2, T1 parmaeter3, T2 parmaeter4, string stepInfo, bool log = true, bool screenShot = false)
         {
             try
             {
                 if (_exception == null)
                 {
+                    Logger.StepLog(stepInfo);
                     action(parmaeter1, parmaeter2, parmaeter3, parmaeter4);
                     if (log)
                         StepLog(stepInfo, screenShot);                    
@@ -350,16 +315,16 @@ namespace TestCases.Tests
                 test.Log(Status.Pass, "Step : " + stepInfo);
             }
             else
-            {
-                //test.CreateNode("Step : "+stepInfo);
-                test.Log(Status.Pass, "Step : " + stepInfo);
+            {                
+                test.Log(Status.Pass, "Step : " + stepInfo);                
             }
                 
         }
 
         private void LogException(string stepInfo,Exception e)
         {
-            test.Log(Status.Fail, $"Step : {stepInfo}, [Exception] : {e.Message}");
+            test.Log(Status.Fail, $"Step : {stepInfo}, [Exception] : {e.Message}");            
+            Logger.Log("Exception : " + e);
             _exception = e;
             throw new Exception("Exception : " + e.Message);
         }

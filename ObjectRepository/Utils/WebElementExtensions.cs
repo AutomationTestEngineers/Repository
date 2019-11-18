@@ -36,7 +36,7 @@ namespace ObjectRepository
             return (By)bysFromElement[0];
         }
 
-        public static IWebElement find(this IWebElement element,By by)
+        public static IWebElement find(this IWebElement element, By by)
         {
             try
             {
@@ -44,6 +44,7 @@ namespace ObjectRepository
             }
             catch { return null; }
         }
+
         public static bool Displayed(this IWebElement element)
         {
             try
@@ -54,7 +55,7 @@ namespace ObjectRepository
             catch { return false; }
         }
 
-        public static void SelectDropDown(this IWebElement element, IWebDriver driver, string option, bool js = false)
+        public static void SelectDropDown(this IWebElement element, string option, string elementName, IWebDriver driver, bool js = false)
         {
             int count = 0;
             try
@@ -67,7 +68,7 @@ namespace ObjectRepository
                     for (int i = 0; i < 25; i++)
                     {
                         count = i;
-                        element.ClickCustom(driver);
+                        element.ClickCustom(elementName, driver);
                         var options = element.FindElements(By.TagName("option"));
                         Wait((d => d.FindElements(By.TagName("option")).Count() > 0), driver, 1);
                         foreach (var a in options)
@@ -86,36 +87,38 @@ namespace ObjectRepository
                     Thread.Sleep(3000);
                     JavaScriptExecutor(string.Format(JSOperator.DropDown, option), element);
                 }
-
+                if (selected)
+                    Logger.Log($"Combo Box : [{elementName}] Selected with option [{option}]");
                 if (!selected)
                     throw new Exception($"[Root Cause] : Unable to Secting DropDown Option [{option}] On [{element.GetLocator()}] ## [Retry Count] : {count + 1}");
 
             }
             catch (Exception e)
             {
-                Console.WriteLine($"[Root Cause] : Unable to Secting DropDown Option [{option}] On [{element.GetLocator()}]");
+                Logger.Log($"[Root Cause] : Unable to Secting DropDown Option [{option}] On [{element.GetLocator()}]");
                 throw new Exception(e.Message);
             }
         }
 
-        public static string SelectComboBox(this IWebElement element, string option, IWebDriver driver)
+        public static string SelectComboBox(this IWebElement element, string option, string elementName, IWebDriver driver)
         {
             element.HighlightElement(driver);
             SelectElement select = new SelectElement(element);
             Wait((d => d.FindElements(By.TagName("option")).Count() > 0), driver, 1);
-            option = option ?? select.Options[GenericUtils.GetRandomNumber(1, select.Options.Count-1)].Text.ToString().Trim();
+            option = option ?? select.Options[GenericUtils.GetRandomNumber(1, select.Options.Count - 1)].Text.ToString().Trim();
             select.SelectByText(option);
             element.ScreenBusy(driver);
+            Logger.Log($"Combo Box : [{elementName}] Selected with option [{option}]");
             return select.SelectedOption.Text.ToString().Trim();
         }
 
-        public static string GetSelected(this IWebElement element,bool value = true)
+        public static string GetSelected(this IWebElement element, bool value = true)
         {
             SelectElement select = new SelectElement(element);
             if (value)
             {
                 var a = select.SelectedOption.Text.ToString().Trim();
-                return element.FindElements(By.TagName("option")).Where(opt => opt.Text.Contains(a)).FirstOrDefault().GetAttribute("value");                
+                return element.FindElements(By.TagName("option")).Where(opt => opt.Text.Contains(a)).FirstOrDefault().GetAttribute("value");
             }
             return select.SelectedOption.Text.ToString().Trim();
         }
@@ -124,15 +127,15 @@ namespace ObjectRepository
         {
             var options = element.FindElements(By.TagName("option"));
             Wait((d => d.FindElements(By.TagName("option")).Count() > 0), driver, 1);
-            return options.Select(a=>a.Text).ToList();
+            return options.Select(a => a.Text).ToList();
         }
 
-        public static void ClickCustom(this IWebElement element, IWebDriver driver, bool js = false,bool clickable = true)
+        public static void ClickCustom(this IWebElement element, string elementName, IWebDriver driver, bool js = false, bool clickable = true)
         {
             try
             {
                 element.ScreenBusy(driver);
-                if(clickable)
+                if (clickable)
                     element.ElementToBeClickable(driver);
                 element.HighlightElement(driver);
                 if (!js)
@@ -140,17 +143,18 @@ namespace ObjectRepository
                 else
                     JavaScriptExecutor(JSOperator.Click, element);
                 element.ScreenBusy(driver);
+                Logger.Log($"Click Success: [{elementName}] ");
             }
             catch (Exception e)
             {
-                Console.WriteLine($"[Root Cause] : While Performing Click On [{element.GetLocator()}]");
-                Console.WriteLine(e.StackTrace);
+                Logger.Log($"[Root Cause] : While Performing Click On [{element.GetLocator()}]");
+                Logger.Log(e.StackTrace);
                 throw new Exception(e.Message);
             }
 
         }
 
-        public static void SendKeysWrapper(this IWebElement element, string text, IWebDriver driver, bool js = false)
+        public static void SendKeysWrapper(this IWebElement element, string text, string elementName, IWebDriver driver, bool js = false)
         {
             try
             {
@@ -162,16 +166,17 @@ namespace ObjectRepository
                     Thread.Sleep(50);
                     element.SendKeys(text);
                     ScreenBusy(driver);
+                    Logger.Log($"Sendkeys Success : [{elementName}] with value [{text}]");
                 }
                 else
                 {
-                    JavaScriptExecutor(string.Format(JSOperator.SetValue,text), element);
+                    JavaScriptExecutor(string.Format(JSOperator.SetValue, text), element);
                 }
-                
+
             }
             catch (Exception e)
             {
-                Console.WriteLine($"[Root Cause] : While Sending Text On [{element.GetLocator()}]");
+                Logger.Log($"[Root Cause] : While Sending Text On [{element.GetLocator()}]");
                 throw new Exception(e.Message);
             }
         }
@@ -181,7 +186,7 @@ namespace ObjectRepository
             try
             {
                 var wait = new WebDriverWait(driver, TimeSpan.FromSeconds(Int16.Parse(Parameter.Get<string>("ScreenTimeOut"))));
-                wait.Until(ExpectedConditions.InvisibilityOfElementLocated(By.XPath(Parameter.Get<string>("ScreenBusy"))));                
+                wait.Until(ExpectedConditions.InvisibilityOfElementLocated(By.XPath(Parameter.Get<string>("ScreenBusy"))));
             }
             catch { }
         }
@@ -200,7 +205,7 @@ namespace ObjectRepository
         {
             if (bool.Parse(Parameter.Get<string>("Highlight").ToLower()))
             {
-                int count = Int16.Parse( Parameter.Get<string>("HighlightCount"));
+                int count = Int16.Parse(Parameter.Get<string>("HighlightCount"));
                 for (int i = 0; i < count; i++)
                 {
                     Thread.Sleep(3);
@@ -219,7 +224,7 @@ namespace ObjectRepository
                 wait.IgnoreExceptionTypes(typeof(Exception));
                 wait.Until(condition);
             }
-            catch { }            
+            catch { }
         }
 
         public static void ElementToBeClickable(this IWebElement element, IWebDriver driver, int timeOut = 10)
@@ -228,7 +233,7 @@ namespace ObjectRepository
             {
                 Wait(ExpectedConditions.ElementToBeClickable(element), driver, timeOut);
             }
-            catch { Console.WriteLine($"    Element Not Clickable [Locator] : {element.GetLocator()}"); }
+            catch { Logger.Log($"    Element Not Clickable [Locator] : {element.GetLocator()}"); }
 
         }
 

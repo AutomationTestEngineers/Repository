@@ -23,7 +23,7 @@ namespace TestCases.Tests
         [TestMethod]
         public void ApplyMemberShip_For_Discovery()
         {
-            //RunStep(HomePage.GoToPage, "membership", "Goto MemeberShip Page");
+            RunStep(HomePage.GoToPage, "membership", "Goto MemeberShip Page");
             RunStep(() =>
             {
                 AgreementsPage.GetMadatoryText().Should().NotBeNullOrEmpty();

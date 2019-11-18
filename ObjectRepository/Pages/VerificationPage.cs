@@ -24,27 +24,30 @@ namespace ObjectRepository.Pages
         {
             for (int j = 0; j < 3; j++)
             {
+                String question = string.Empty;
+                String answer = string.Empty;
                 ScreenBusy();
                 try { driver.FindElement(By.XPath(xpath)); } catch { break; }
                 var size = driver.FindElements(By.XPath(xpath)).Count();
                 for (int i = 1; i <= size; i++)
                 {
                     var q = FindBy(By.XPath($"{xpath}[{i}]//h6")).Text;
-                    var question = q.Split('.')[1].ToString().Replace("?", "").Replace(" ", "").Trim().ToUpper();
-                    string exp_answer = Parameter.Get<string>(question) == null ? "NONEOFTHEABOVE" : Parameter.Get<string>(question);
+                    question = q.Split('.')[1].ToString().Replace("?", "").Replace(" ", "").Trim().ToUpper();
+                    Logger.Log("Question : {0}", question);
+                    answer = Parameter.Get<string>(question) == null ? "NONEOFTHEABOVE" : Parameter.Get<string>(question);
                     var answers = FindElements(By.XPath($"{xpath}[{i}]/div/label/label")).Select(t => t.Text.Replace(" ", "").Trim().ToUpper()).ToList();
-                    var index = answers.FindIndex(s => s.Contains(exp_answer));
+                    var index = answers.FindIndex(s => s.Contains(answer));
                     try
                     {
-                        FindBy(By.XPath($"({xpath}[{i}]/div/label/input)[{index + 1}]"), 2, true).ClickCustom(driver);
+                        FindBy(By.XPath($"({xpath}[{i}]/div/label/input)[{index + 1}]"), 2, true).ClickCustom(answer, driver);
                     }
                     catch (Exception e)
                     {
                         index = answers.FindIndex(s => s.Contains("NONEOFTHEABOVE"));
-                        FindBy(By.XPath($"({xpath}[{i}]/div/label/input)[{index + 1}]"), 2, true).ClickCustom(driver);
-                    }                 
+                        FindBy(By.XPath($"({xpath}[{i}]/div/label/input)[{index + 1}]"), 2, true).ClickCustom("NONEOFTHEABOVE", driver);
+                    }
                 }
-                btn_verid_answers_dispatch.ClickCustom(driver);
+                btn_verid_answers_dispatch.ClickCustom("Submit", driver);
             }
         }
     }

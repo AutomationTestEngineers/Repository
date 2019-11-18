@@ -27,16 +27,16 @@ namespace ObjectRepository.Pages
             switch (type.ToUpper())
             {
                 case "MEMBERSHIP":
-                    memberShip.ClickCustom(driver);
+                    memberShip.ClickCustom("MEMBERSHIP", driver);
                     break;
                 case "LOANS":
-                    loans.ClickCustom(driver);
+                    loans.ClickCustom("LOANS", driver);
                     break;
                 case "CLIENT":
-                    client.ClickCustom(driver);
-                    break;                
+                    client.ClickCustom("CLIENT", driver);
+                    break;
             }
-            Console.Write(type+" : Page is opened");
+            Console.Write(type + " : Page is opened");
         }
     }
 }

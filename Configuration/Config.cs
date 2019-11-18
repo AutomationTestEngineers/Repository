@@ -38,7 +38,7 @@ namespace Configuration
             _parametersDictionary.TryGetValue(key, out value);
             if (value != null)
                 return value as T;
-            Console.WriteLine($"[Null Value] - Question[{key}] does not Question.xml file");
+            Logger.Log($"[Null Value] - Question[{key}] does not Question.xml file");
             return null;
         }
 
@@ -61,7 +61,7 @@ namespace Configuration
                     }
                 }
                 else
-                    Console.WriteLine($"[Skipping collection] - Parameters file: [{parametersFileName}]. Section xpath: [{sectionXpath}], there are no parameters or xpath is wrong.");
+                    Logger.Log($"[Skipping collection] - Parameters file: [{parametersFileName}]. Section xpath: [{sectionXpath}], there are no parameters or xpath is wrong.");
             }
         }        
     }
@@ -83,7 +83,7 @@ namespace Configuration
             if (shouldLog)
             {
                 var stringValue = value as string;
-                Console.WriteLine("[Parameter Created] - Name: [{0}]. Value: [{1}].", key, stringValue ?? typeof(T).ToString());
+                Logger.Log("[Parameter Created] - Name: [{0}]. Value: [{1}].", key, stringValue ?? typeof(T).ToString());
             }
         }
 
@@ -101,11 +101,11 @@ namespace Configuration
                 if (shouldLog)
                 {
                     var stringValue = value as string;
-                    Console.WriteLine("[Parameter Info] - Name: [{0}]. Value: [{1}].", key, stringValue ?? typeof(T).ToString());
+                    Logger.Log("[Parameter Info] - Name: [{0}]. Value: [{1}].", key, stringValue ?? typeof(T).ToString());
                 }
                 return value as T;
             }
-            Console.WriteLine("[Null Value] - Parameter collection does not contain key: [{0}]", key);
+            Logger.Log("[Null Value] - Parameter collection does not contain key: [{0}]", key);
             return null;
         }
 
@@ -214,11 +214,11 @@ namespace Configuration
                         }
                     }
                     // Log appropriate collect summary info message.
-                    Console.WriteLine($"[Collected] - Parameters file: [{parametersFileName}]. Section xpath: [{sectionXpath}]. Parameters collected: [{xmlNode.ChildNodes.Count}].");
+                    Logger.Log($"[Collected] - Parameters file: [{parametersFileName}]. Section xpath: [{sectionXpath}]. Parameters collected: [{xmlNode.ChildNodes.Count}].");
                 }
                 else
                 {
-                    Console.WriteLine($"[Skipping collection] - Parameters file: [{parametersFileName}]. Section xpath: [{sectionXpath}], there are no parameters or xpath is wrong.");
+                    Logger.Log($"[Skipping collection] - Parameters file: [{parametersFileName}]. Section xpath: [{sectionXpath}], there are no parameters or xpath is wrong.");
                 }
             }
         }
